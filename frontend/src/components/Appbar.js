@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
+import { BottomNavigation } from '@mui/material';
 
 export default function Appbar() {
   return (
@@ -21,7 +22,7 @@ export default function Appbar() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontFamily: 'Monomaniac One, sans-serif', fontSize: 64}}>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontFamily: 'Monomaniac One, sans-serif', fontSize: '4rem'}}>
             ChronoChords
           </Typography>
           <Button color="inherit">Login</Button>
