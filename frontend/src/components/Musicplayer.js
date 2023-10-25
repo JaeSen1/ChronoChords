@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -78,31 +78,66 @@ const TinyText = styled(Typography)({
 });
 
 export default function MusicPlayerSlider() {
-  // const [duration, setDuration] = React.useState(0);
-
-  // // Callback fired when media duration is available
-  // const handleDuration = (duration) => {
-  //   setDuration(duration);
-  // };
-
+  const playerRef = useRef(null);
   const theme = useTheme();
-  const duration = 200; // seconds
-  const [position, setPosition] = React.useState(32);
+  const [duration, setDuration] = useState(0); // total duration of the audio
+  const [position, setPosition] = useState(0); // current position of the audio
+  const [volume, setVolume] = React.useState(0.3); // Volume is between 0 and 1
+
+  const [isSeeking, setIsSeeking] = useState(false);
+
+
+  const [url, setUrl] = useState('kissmethruthephone.mp3'); // <-- set the path to your audio file here
+
+  // This handler updates the 'position' as the audio plays
+  const handleProgress = (progress) => {
+    // Only update the position if the user is NOT currently seeking.
+    if (!isSeeking) {
+      setPosition(progress.playedSeconds);
+    }
+  };
+
+  // This handler updates the 'duration' once the audio is loaded
+  const handleDuration = (duration) => {
+    setDuration(duration);
+  };
+
+  // Adjust the position when the user drags the slider
+  const handleSeekChange = (e, newValue) => {
+  setIsSeeking(true); // User starts seeking
+  setPosition(newValue); // Update the position immediately for responsiveness
+};
+
+  // Seek the position when the user stops dragging the slider
+  const handleSeekMouseUp = (e, newValue) => {
+    if (playerRef.current) {
+      playerRef.current.seekTo(newValue); // Seek the player to the new position
+    }
+    setIsSeeking(false); // Seeking is finished
+  };
+
   const [paused, setPaused] = React.useState(false);
+
   function formatDuration(value) {
-    const minute = Math.floor(value / 60);
-    const secondLeft = value - minute * 60;
+    const roundedValue = Math.floor(value);  // rounding down the time to display
+    const minute = Math.floor(roundedValue / 60);
+    const secondLeft = roundedValue - minute * 60;
     return `${minute}:${secondLeft < 10 ? `0${secondLeft}` : secondLeft}`;
   }
+
+  useEffect(() => {
+    console.log('Position:', position);
+    console.log('Paused:', paused);
+    console.log('Volume:', volume);
+    console.log('File:', url);
+    // ...any other state log you find necessary
+  }, [position, paused, volume, url]); // add other dependencies here as needed
+  
   const mainIconColor = theme.palette.mode === 'dark' ? '#fff' : '#000';
   const lightIconColor =
     theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)';
   return (
     <Box sx={{ width: '100%', overflow: 'hidden'}}>
-    {/* <ReactPlayer
-      url='./static/music/kissmethruthephone.mp3'
-      onDuration={handleDuration}
-    /> */}
     <WallPaper/>
       <Widget>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -112,14 +147,28 @@ export default function MusicPlayerSlider() {
           </CoverImage>
           </Box>
         </Box>
+
+        <ReactPlayer
+          ref={playerRef}
+          url={url}
+          progressInterval={50}
+          playing={!paused} // play or pause the track based on 'paused' state
+          onDuration={handleDuration} // get the duration of the audio
+          onProgress={handleProgress} // get the current position of the audio
+          volume={volume} // Control the player's volume
+          width="0" // Setting width and height as 0 to hide the player's default UI
+          height="0"
+        />
+
         <Slider
           aria-label="time-indicator"
           size="small"
+          step={0.01}
           value={position}
           min={0}
-          step={1}
-          max={duration}
-          onChange={(_, value) => setPosition(value)}
+          max={duration} // Set maximum value as the duration of the audio
+          onChange={handleSeekChange} // While dragging the slider
+          onChangeCommitted={handleSeekMouseUp} // When the dragging ends
           sx={{
             color: theme.palette.mode === 'dark' ? '#fff' : 'rgba(0,0,0,0.87)',
             height: 4,
@@ -184,7 +233,10 @@ export default function MusicPlayerSlider() {
           <VolumeDownRounded htmlColor={lightIconColor} />
           <Slider
             aria-label="Volume"
-            defaultValue={30}
+            value={volume * 100} // Reflects the current volume as a percentage
+            min={0} // Minimum volume is 0%
+            max={100} // Maximum volume is 100%
+            onChange={(_, newValue) => setVolume(newValue / 100)} // Update volume state when slider changes
             sx={{
               color: theme.palette.mode === 'dark' ? '#fff' : 'rgba(0,0,0,0.87)',
               '& .MuiSlider-track': {
