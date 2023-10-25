@@ -32,8 +32,10 @@ export default function Appbar() {
           </Box>
 
           {/* Right section (if you have icons or buttons to the right) */}
-          
-          <Link to="/login" style={{ color: 'inherit', textDecoration: 'none' }}><Button color="inherit">Login</Button></Link>
+          <Box>
+            <Link to="/register" style={{ color: 'inherit', textDecoration: 'none' }}><Button color="inherit">Register</Button></Link>
+            <Link to="/login" style={{ color: 'inherit', textDecoration: 'none' }}><Button color="inherit">Login</Button></Link>
+          </Box>
           
         </Toolbar>
       </AppBar>
