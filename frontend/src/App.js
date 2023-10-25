@@ -1,10 +1,10 @@
 import Appbar from './components/Appbar'
-import Home from './components/Home'
-import Login from './components/Login'
-import Registration from './components/Register'
-import About from './components/About'
-import NoPage from './components/NoPage'
-import ForgotPassword from './components/ForgotPassword'
+import Home from './pages/Home'
+import Login from './pages/Login'
+import Registration from './pages/Register'
+import About from './pages/About'
+import NoPage from './pages/NoPage'
+import ForgotPassword from './pages/ForgotPassword'
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
