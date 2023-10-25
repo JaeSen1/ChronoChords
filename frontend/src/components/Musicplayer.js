@@ -10,6 +10,7 @@ import PlayArrowRounded from '@mui/icons-material/PlayArrowRounded';
 import VolumeUpRounded from '@mui/icons-material/VolumeUpRounded';
 import VolumeDownRounded from '@mui/icons-material/VolumeDownRounded';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
+import ReactPlayer from 'react-player';
 
 const WallPaper = styled('div')( {
     position: 'absolute',
@@ -77,6 +78,13 @@ const TinyText = styled(Typography)({
 });
 
 export default function MusicPlayerSlider() {
+  // const [duration, setDuration] = React.useState(0);
+
+  // // Callback fired when media duration is available
+  // const handleDuration = (duration) => {
+  //   setDuration(duration);
+  // };
+
   const theme = useTheme();
   const duration = 200; // seconds
   const [position, setPosition] = React.useState(32);
@@ -91,6 +99,10 @@ export default function MusicPlayerSlider() {
     theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)';
   return (
     <Box sx={{ width: '100%', overflow: 'hidden'}}>
+    {/* <ReactPlayer
+      url='./static/music/kissmethruthephone.mp3'
+      onDuration={handleDuration}
+    /> */}
     <WallPaper/>
       <Widget>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
