@@ -1,20 +1,26 @@
-import './App.css';
 import Appbar from './components/Appbar'
-import Slider from './components/Slider'
-import Musicplayer from './components/Musicplayer'
+import Home from './components/Home'
+import Login from './components/Login'
+import Registration from './components/Register'
+import About from './components/About'
+import NoPage from './components/NoPage'
+import ForgotPassword from './components/ForgotPassword'
 
-function App() {
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+export default function App() {
   return (
-    <div className="App">
-      <Appbar/>
-      <div className="Slider-container">
-        <Slider/>
-      </div>
-      <div className="Musicplayer-container">
-        <Musicplayer/>
-      </div>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Appbar />}>
+          <Route index element={<Home />} />
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Registration />} />
+          <Route path="resetpassword" element={<ForgotPassword />} />
+          <Route path="about" element={<About />} />
+          <Route path="*" element={<NoPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
-
-export default App;
