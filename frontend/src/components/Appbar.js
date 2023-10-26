@@ -5,8 +5,7 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
+import Menu from '../components/Menu'
 
 export default function Appbar() {
   return (
@@ -14,15 +13,9 @@ export default function Appbar() {
       <AppBar position="static" sx={{ backgroundColor: '#1B1B1B' }}>
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
           {/* Left section (if you have icons or buttons to the left) */}
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
+          <div className="Menu-container">
+                <Menu/>
+            </div>
 
           {/* Center section (for the title) */}
           <Box sx={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', paddingBottom: 2}}>

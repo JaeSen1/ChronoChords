@@ -2,6 +2,7 @@ import '../App.css';
 import Slider from '../components/Slider'
 import Musicplayer from '../components/Musicplayer'
 import Popup from '../components/Popup'
+import Menu from '../components/Menu'
 
 export default function Home() {
     return (
@@ -14,6 +15,9 @@ export default function Home() {
             </div>
             <div className="Popup-container">
                 <Popup/>
+            </div>
+            <div className="Menu-container">
+                <Menu/>
             </div>
         </div>
     );
