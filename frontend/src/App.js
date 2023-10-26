@@ -1,5 +1,5 @@
 import Appbar from './components/Appbar'
-import Home from './pages/Home'
+import MainGame from './pages/MainGame'
 import Login from './pages/Login'
 import Registration from './pages/Register'
 import About from './pages/About'
@@ -13,7 +13,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Appbar />}>
-          <Route index element={<Home />} />
+          <Route index element={<MainGame />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Registration />} />
           <Route path="resetpassword" element={<ForgotPassword />} />

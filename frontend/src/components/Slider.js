@@ -5,6 +5,8 @@ import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import { useState } from 'react';
 
 function ValueLabelComponent(props) {
   const { children, value } = props;
@@ -110,13 +112,30 @@ const TimelineSlider = styled(Slider)({
 });
 
 
-export default function CustomizedSlider() {
+export default function CustomizedSlider(props) {
+
+  const { value, onChange, onSubmit } = props;
+
+  // This function will be triggered when the "Submit" button is clicked.
+  const handleSubmit = () => {
+    onSubmit(); // Call the submit function passed from the parent component
+  };
+
   return (
-    <Box sx={{ width: '80%' }}>
+    <Box 
+      sx={{ 
+        width: '80%', 
+        display: 'flex', // indicates we're using Flexbox
+        flexDirection: 'column', // stacks children vertically
+        alignItems: 'center', // centers children along the cross-axis, which is horizontal for a column-direction flex container
+        justifyContent: 'center', // centers children along the main-axis (vertically, in this case)
+      }}
+    >
       <Box sx={{ m: 3 }} />
       <TimelineSlider
         valueLabelDisplay="on"
-        defaultValue={1960}
+        value={value}
+        onChange={onChange} // Set up an event handler to manage changes.
         step={1}
         marks={marks}
         min={1900}
@@ -124,6 +143,16 @@ export default function CustomizedSlider() {
         aria-label="slider"
         getAriaValueText={valuetext}
       />
+      {/* The Button component is now a direct child of the flex container, so it will be centered horizontally. */}
+      <Box sx={{ mt: 2 }}>
+        <Button 
+          variant="contained" 
+          color="primary" 
+          onClick={handleSubmit}
+        >
+          Submit
+        </Button>
+      </Box>
     </Box>
   );
 }
