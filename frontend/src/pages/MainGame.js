@@ -1,7 +1,7 @@
 import '../App.css';
 import React, { useState } from 'react';
 import Slider from '../components/Slider';
-import MusicPlayer from '../components/MusicPlayer';
+import MusicPlayer from '../components/Musicplayer';
 import RoundCount from '../components/RoundCount';
 import ScoreDisplay from '../components/ScoreDisplay';
 
