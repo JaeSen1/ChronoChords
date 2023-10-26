@@ -29,14 +29,14 @@
 /* New CSS class for the Slider container */
 .Slider-container {
   position: absolute;
-  left: 50%; /* Horizontal centering */
-  top: 400px; /* Adjust as needed to position vertically from the bottom */
+  left: 115vh; /* Horizontal centering */
+  top: 50vh; /* Adjust as needed to position vertically from the bottom */
   transform: translateX(-50%); /* Ensures perfect centering regardless of the element's width */
 }
 
 .Musicplayer-container {
   position: absolute;
   left: 50%; /* Horizontal centering */
-  top: 100px; /* Adjust as needed to position vertically from the top */
+  top: 15vh; /* Adjust as needed to position vertically from the top */
   transform: translateX(-50%); /* Ensures perfect centering regardless of the element's width */
 }
