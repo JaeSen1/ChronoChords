@@ -82,17 +82,20 @@ const TinyText = styled(Typography)({
   letterSpacing: 0.2,
 });
 
-export default function MusicPlayerSlider() {
+export default function MusicPlayerSlider({ url, songDetails, reveal }) {
   const playerRef = useRef(null);
   const theme = useTheme();
   const [duration, setDuration] = useState(0); // total duration of the audio
   const [position, setPosition] = useState(0); // current position of the audio
   const [volume, setVolume] = React.useState(0.3); // Volume is between 0 and 1
 
+  // You can use the 'reveal' prop to decide whether to show song details or placeholders.
+  const displayCover = songDetails.cover;
+  const displayArtist = reveal ? songDetails.artist : '?????????';
+  const displayTitle = reveal ? songDetails.title : '?????????';
+  const displayAlbum = reveal ? songDetails.album : '?????????';
+
   const [isSeeking, setIsSeeking] = useState(false);
-
-
-  const [url, setUrl] = useState('kissmethruthephone.mp3'); // <-- set the path to your audio file here
 
   // This handler updates the 'position' as the audio plays
   const handleProgress = (progress) => {
@@ -149,7 +152,14 @@ export default function MusicPlayerSlider() {
           
           {/* Your cover image component - No changes here */}
           <CoverImage>
-            <QuestionMarkIcon/>
+            {reveal ? (
+              <img
+                alt={displayTitle}
+                src={displayCover}
+              />
+            ) : (
+              <QuestionMarkIcon style={{ fontSize: 100 }} />
+            )}
           </CoverImage>
 
           {/* Container for the text, you want this to take the rest of the space to the right */}
@@ -163,13 +173,13 @@ export default function MusicPlayerSlider() {
             }}
           >
             <Typography variant="caption" color="text.secondary" fontWeight={500}>
-              Artist Name
+              {displayArtist}  {/* Updated */}
             </Typography>
             <Typography noWrap>
-              <b>Song Name Goes Here</b>
+              <b>{displayTitle}</b>  {/* Updated */}
             </Typography>
             <Typography noWrap letterSpacing={-0.25}>
-              Album Name Goes Here
+              {displayAlbum}  {/* Updated */}
             </Typography>
           </Box>
         </Box>

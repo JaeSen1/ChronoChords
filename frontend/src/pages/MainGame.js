@@ -7,16 +7,40 @@ import ScoreDisplay from '../components/ScoreDisplay';
 
 
 export default function MainGame() {
-    const actualYear = 2008; // this could come from your data source
+    const [round, setRound] = useState(1);
+    const [score, setScore] = useState(null); // this will be reset every round
+    const [songIndex, setSongIndex] = useState(0); // to keep track of the current song
+    const [reveal, setReveal] = useState(false); // to control revealing song details
+
     const [userGuess, setUserGuess] = useState(1960); // initial value
-    const [score, setScore] = useState(null);
+
+    const songs = [
+        { url: 'music/beatlesholdyourhand.mp3', cover: 'covers/beatlesholdyourhand.jpg', year: 1964, title: 'I Want to Hold Your Hand', artist: 'The Beatles', album: 'Meet the Beatles!' },
+        { url: 'music/kissmethruthephone.mp3', cover: 'covers/kissmethruthephone.jpg', year: 2008, title: 'Kiss Me Thru the Phone', artist: 'Soulja Boy', album: 'iSouljaBoyTellem' },
+        { url: 'music/taylorswift22.mp3', cover: 'covers/taylorswift22.png', year: 2012, title: '22', artist: 'Taylor Swift', album: 'Red' },
+        { url: 'music/TootTootTootsie.mp3', cover: 'covers/TootTootTootsie.jpg', year: 1922, title: 'Toot, Toot, Tootsie (Goo\' Bye!)', artist: 'Leo Feist, Inc.', album: 'N/A' },
+        { url: 'music/vanhalenjump.mp3', cover: 'covers/vanhalenjump.jpg', year: 1984, title: 'Jump', artist: 'Van Halen', album: '1984' },
+    ]
+    
+    const currentSong = songs[songIndex];
+
+    // 2. Handle advancing to the next game/round
+    const handleNextGame = () => {
+        if (round < 5) {
+            setRound(round + 1);
+            setSongIndex((songIndex + 1) % songs.length); // go to the next song, loop back to the first song if needed
+            setScore(null); // reset the score
+            setReveal(false); // hide details for the new round
+        }
+    };
 
     // Handler for the slider change
     const handleSliderChange = (event, newValue) => {
         setUserGuess(newValue);
     };
 
-    const handleSubmitGuess = () => {
+    const handleGuess = (guess) => {
+    const actualYear = currentSong.year;
     const difference = Math.abs(actualYear - userGuess);
 
     // Constants for calculation
@@ -48,21 +72,35 @@ export default function MainGame() {
 
     // Update the score state.
     setScore(newScore);
+
+    // Reveal song details after guessing
+    setReveal(true);
 };
 
     return (
         <div className="App">
-            <RoundCount />
+            <RoundCount round={round} />
             <ScoreDisplay score={score} />
             <div className="Slider-container">
                 <Slider 
                     value={userGuess} 
                     onChange={handleSliderChange} 
-                    onSubmit={handleSubmitGuess} 
+                    onSubmit={handleGuess} 
+                    onNextRound={handleNextGame}
+                    finalRound={round >= 5} // true if it's the final round, else false
                 />
             </div>
             <div className="Musicplayer-container">
-                <MusicPlayer />
+            <MusicPlayer 
+                url={currentSong.url} 
+                songDetails={{
+                    cover: currentSong.cover,
+                    artist: currentSong.artist,
+                    title: currentSong.title,
+                    album: currentSong.album,
+                }}
+                reveal={reveal}
+            />
             </div>
         </div>
     );
