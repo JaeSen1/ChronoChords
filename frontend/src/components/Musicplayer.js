@@ -47,6 +47,7 @@ const WallPaper = styled('div')( {
 
 const Widget = styled('div')(({ theme }) => ({
   padding: 16,
+  paddingTop: 20,
   borderRadius: 16,
   width: 650,
   maxWidth: '100%',
@@ -58,13 +59,17 @@ const Widget = styled('div')(({ theme }) => ({
 }));
 
 const CoverImage = styled('div')({
-  width: 100,
-  height: 100,
+  width: 250,
+  height: 250,
+  marginBottom: 10,
   objectFit: 'cover',
   overflow: 'hidden',
   flexShrink: 0,
   borderRadius: 8,
   backgroundColor: 'rgba(0,0,0,0.08)',
+  display: 'flex',           // added line
+  justifyContent: 'center',  // added line
+  alignItems: 'center',      // added line
   '& > img': {
     width: '100%',
   },
@@ -139,14 +144,36 @@ export default function MusicPlayerSlider() {
     <Box sx={{ width: '100%', overflow: 'hidden'}}>
     <WallPaper/>
       <Widget>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Box sx={{ ml: 1.5, minWidth: 0}}>
+      <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}> 
+          {/* flexDirection: 'row' will place your items side by side */}
+          
+          {/* Your cover image component - No changes here */}
           <CoverImage>
             <QuestionMarkIcon/>
           </CoverImage>
+
+          {/* Container for the text, you want this to take the rest of the space to the right */}
+          <Box sx={{ 
+              ml: 10,  // margin left to give some space between image and text
+              flexGrow: 1,  // allow this box to grow and consume the remaining space in the flex container
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'flex-start',  // content aligned to the start of the box (change to 'flex-end' if you want it aligned to the right)
+              minWidth: 0,  // ensures the box can shrink below its minimum content size if necessary
+            }}
+          >
+            <Typography variant="caption" color="text.secondary" fontWeight={500}>
+              Artist Name
+            </Typography>
+            <Typography noWrap>
+              <b>Song Name Goes Here</b>
+            </Typography>
+            <Typography noWrap letterSpacing={-0.25}>
+              Album Name Goes Here
+            </Typography>
           </Box>
         </Box>
-
+  
         <ReactPlayer
           ref={playerRef}
           url={url}

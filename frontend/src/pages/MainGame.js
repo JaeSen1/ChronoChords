@@ -2,7 +2,8 @@ import '../App.css';
 import React, { useState } from 'react';
 import Slider from '../components/Slider';
 import MusicPlayer from '../components/MusicPlayer';
-import Score from '../components/Score';
+import RoundCount from '../components/RoundCount';
+import ScoreDisplay from '../components/ScoreDisplay';
 
 
 export default function MainGame() {
@@ -49,21 +50,20 @@ export default function MainGame() {
     setScore(newScore);
 };
 
-
     return (
         <div className="App">
+            <RoundCount />
+            <ScoreDisplay score={score} />
             <div className="Slider-container">
-            <Slider 
-                value={userGuess} 
-                onChange={handleSliderChange} 
-                onSubmit={handleSubmitGuess} 
-            />
-        </div>
-        <div className="Musicplayer-container">
-            <MusicPlayer />
-        </div>
-        {/* Display the score somewhere */}
-        {score !== null && <div>Your score: {score}</div>}
+                <Slider 
+                    value={userGuess} 
+                    onChange={handleSliderChange} 
+                    onSubmit={handleSubmitGuess} 
+                />
+            </div>
+            <div className="Musicplayer-container">
+                <MusicPlayer />
+            </div>
         </div>
     );
 }

@@ -40,3 +40,7 @@
   top: 15vh; /* Adjust as needed to position vertically from the top */
   transform: translateX(-50%); /* Ensures perfect centering regardless of the element's width */
 }
+
+.Score-text {
+  font-family: Arial, Helvetica, sans-serif
+}

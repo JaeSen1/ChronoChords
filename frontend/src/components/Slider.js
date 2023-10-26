@@ -73,6 +73,7 @@ const TimelineSlider = styled(Slider)({
   color: 'grey',
   width: 1200,
   height: 43,
+  marginTop: 150,
   '& .MuiSlider-track': {
     border: 'none',
     backgroundColor: '#EF9F9F'

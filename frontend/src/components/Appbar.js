@@ -13,10 +13,15 @@ export default function Appbar() {
       <AppBar position="static" sx={{ backgroundColor: '#1B1B1B' }}>
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
           {/* Left section (if you have icons or buttons to the left) */}
-          <div className="Menu-container">
-                <Menu/>
-            </div>
-
+          <Box
+            className="Menu-container"
+            sx={{
+              position: 'relative', // this ensures z-index is respected by the Menu
+              zIndex: 1300, // this value should be higher than other elements, MUI uses 1200 for AppBar, so 1300 ensures it's above
+            }}
+          >
+            <Menu/>
+          </Box>
           {/* Center section (for the title) */}
           <Box sx={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', paddingBottom: 2}}>
             <Typography variant="h6" component="div" sx={{ fontFamily: 'Monomaniac One, sans-serif', fontSize: '4rem' }}>
