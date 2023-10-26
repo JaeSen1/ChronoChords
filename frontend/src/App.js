@@ -1,10 +1,10 @@
 import Appbar from './components/Appbar'
-import Home from './components/Home'
-import Login from './components/Login'
-import Registration from './components/Register'
-import About from './components/About'
-import NoPage from './components/NoPage'
-import ForgotPassword from './components/ForgotPassword'
+import MainGame from './pages/MainGame'
+import Login from './pages/Login'
+import Registration from './pages/Register'
+import About from './pages/About'
+import NoPage from './pages/NoPage'
+import ForgotPassword from './pages/ForgotPassword'
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
@@ -13,7 +13,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Appbar />}>
-          <Route index element={<Home />} />
+          <Route index element={<MainGame />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Registration />} />
           <Route path="resetpassword" element={<ForgotPassword />} />

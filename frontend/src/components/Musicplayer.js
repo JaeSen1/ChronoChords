@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -10,6 +10,7 @@ import PlayArrowRounded from '@mui/icons-material/PlayArrowRounded';
 import VolumeUpRounded from '@mui/icons-material/VolumeUpRounded';
 import VolumeDownRounded from '@mui/icons-material/VolumeDownRounded';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
+import ReactPlayer from 'react-player';
 
 const WallPaper = styled('div')( {
     position: 'absolute',
@@ -46,6 +47,7 @@ const WallPaper = styled('div')( {
 
 const Widget = styled('div')(({ theme }) => ({
   padding: 16,
+  paddingTop: 20,
   borderRadius: 16,
   width: 650,
   maxWidth: '100%',
@@ -57,13 +59,17 @@ const Widget = styled('div')(({ theme }) => ({
 }));
 
 const CoverImage = styled('div')({
-  width: 100,
-  height: 100,
+  width: 250,
+  height: 250,
+  marginBottom: 10,
   objectFit: 'cover',
   overflow: 'hidden',
   flexShrink: 0,
   borderRadius: 8,
   backgroundColor: 'rgba(0,0,0,0.08)',
+  display: 'flex',           // added line
+  justifyContent: 'center',  // added line
+  alignItems: 'center',      // added line
   '& > img': {
     width: '100%',
   },
@@ -77,15 +83,60 @@ const TinyText = styled(Typography)({
 });
 
 export default function MusicPlayerSlider() {
+  const playerRef = useRef(null);
   const theme = useTheme();
-  const duration = 200; // seconds
-  const [position, setPosition] = React.useState(32);
-  const [paused, setPaused] = React.useState(false);
+  const [duration, setDuration] = useState(0); // total duration of the audio
+  const [position, setPosition] = useState(0); // current position of the audio
+  const [volume, setVolume] = React.useState(0.3); // Volume is between 0 and 1
+
+  const [isSeeking, setIsSeeking] = useState(false);
+
+
+  const [url, setUrl] = useState('kissmethruthephone.mp3'); // <-- set the path to your audio file here
+
+  // This handler updates the 'position' as the audio plays
+  const handleProgress = (progress) => {
+    // Only update the position if the user is NOT currently seeking.
+    if (!isSeeking) {
+      setPosition(progress.playedSeconds);
+    }
+  };
+
+  // This handler updates the 'duration' once the audio is loaded
+  const handleDuration = (duration) => {
+    setDuration(duration);
+  };
+
+  // Adjust the position when the user drags the slider
+  const handleSeekChange = (e, newValue) => {
+  setIsSeeking(true); // User starts seeking
+  setPosition(newValue); // Update the position immediately for responsiveness
+};
+
+  // Seek the position when the user stops dragging the slider
+  const handleSeekMouseUp = (e, newValue) => {
+    if (playerRef.current) {
+      playerRef.current.seekTo(newValue); // Seek the player to the new position
+    }
+    setIsSeeking(false); // Seeking is finished
+  };
+
+  const [paused, setPaused] = React.useState(true);
+
   function formatDuration(value) {
-    const minute = Math.floor(value / 60);
-    const secondLeft = value - minute * 60;
+    const roundedValue = Math.floor(value);  // rounding down the time to display
+    const minute = Math.floor(roundedValue / 60);
+    const secondLeft = roundedValue - minute * 60;
     return `${minute}:${secondLeft < 10 ? `0${secondLeft}` : secondLeft}`;
   }
+
+  useEffect(() => {
+    console.log('Position:', position);
+    console.log('Paused:', paused);
+    console.log('Volume:', volume);
+    console.log('File:', url);
+  }, [position, paused, volume, url]);
+  
   const mainIconColor = theme.palette.mode === 'dark' ? '#fff' : '#000';
   const lightIconColor =
     theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)';
@@ -93,21 +144,57 @@ export default function MusicPlayerSlider() {
     <Box sx={{ width: '100%', overflow: 'hidden'}}>
     <WallPaper/>
       <Widget>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Box sx={{ ml: 1.5, minWidth: 0}}>
+      <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}> 
+          {/* flexDirection: 'row' will place your items side by side */}
+          
+          {/* Your cover image component - No changes here */}
           <CoverImage>
             <QuestionMarkIcon/>
           </CoverImage>
+
+          {/* Container for the text, you want this to take the rest of the space to the right */}
+          <Box sx={{ 
+              ml: 10,  // margin left to give some space between image and text
+              flexGrow: 1,  // allow this box to grow and consume the remaining space in the flex container
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'flex-start',  // content aligned to the start of the box (change to 'flex-end' if you want it aligned to the right)
+              minWidth: 0,  // ensures the box can shrink below its minimum content size if necessary
+            }}
+          >
+            <Typography variant="caption" color="text.secondary" fontWeight={500}>
+              Artist Name
+            </Typography>
+            <Typography noWrap>
+              <b>Song Name Goes Here</b>
+            </Typography>
+            <Typography noWrap letterSpacing={-0.25}>
+              Album Name Goes Here
+            </Typography>
           </Box>
         </Box>
+  
+        <ReactPlayer
+          ref={playerRef}
+          url={url}
+          progressInterval={50}
+          playing={!paused} // play or pause the track based on 'paused' state
+          onDuration={handleDuration} // get the duration of the audio
+          onProgress={handleProgress} // get the current position of the audio
+          volume={volume} // Control the player's volume
+          width="0" // Setting width and height as 0 to hide the player's default UI
+          height="0"
+        />
+
         <Slider
           aria-label="time-indicator"
           size="small"
+          step={0.01}
           value={position}
           min={0}
-          step={1}
-          max={duration}
-          onChange={(_, value) => setPosition(value)}
+          max={duration} // Set maximum value as the duration of the audio
+          onChange={handleSeekChange} // While dragging the slider
+          onChangeCommitted={handleSeekMouseUp} // When the dragging ends
           sx={{
             color: theme.palette.mode === 'dark' ? '#fff' : 'rgba(0,0,0,0.87)',
             height: 4,
@@ -172,7 +259,10 @@ export default function MusicPlayerSlider() {
           <VolumeDownRounded htmlColor={lightIconColor} />
           <Slider
             aria-label="Volume"
-            defaultValue={30}
+            value={volume * 100} // Reflects the current volume as a percentage
+            min={0} // Minimum volume is 0%
+            max={100} // Maximum volume is 100%
+            onChange={(_, newValue) => setVolume(newValue / 100)} // Update volume state when slider changes
             sx={{
               color: theme.palette.mode === 'dark' ? '#fff' : 'rgba(0,0,0,0.87)',
               '& .MuiSlider-track': {
