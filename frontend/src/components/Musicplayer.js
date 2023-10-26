@@ -116,7 +116,7 @@ export default function MusicPlayerSlider() {
     setIsSeeking(false); // Seeking is finished
   };
 
-  const [paused, setPaused] = React.useState(false);
+  const [paused, setPaused] = React.useState(true);
 
   function formatDuration(value) {
     const roundedValue = Math.floor(value);  // rounding down the time to display
@@ -130,8 +130,7 @@ export default function MusicPlayerSlider() {
     console.log('Paused:', paused);
     console.log('Volume:', volume);
     console.log('File:', url);
-    // ...any other state log you find necessary
-  }, [position, paused, volume, url]); // add other dependencies here as needed
+  }, [position, paused, volume, url]);
   
   const mainIconColor = theme.palette.mode === 'dark' ? '#fff' : '#000';
   const lightIconColor =
