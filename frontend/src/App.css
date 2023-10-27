@@ -38,7 +38,7 @@
 .Musicplayer-container {
   position: absolute;
   left: 50%; /* Horizontal centering */
-  top: 15vh; /* Adjust as needed to position vertically from the top */
+  top: 10vh; /* Adjust as needed to position vertically from the top */
   transform: translateX(-50%); /* Ensures perfect centering regardless of the element's width */
 }
 

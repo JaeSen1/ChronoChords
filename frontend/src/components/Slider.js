@@ -122,7 +122,45 @@ const TimelineSlider = styled(Slider)({
       opacity: 1,
       backgroundColor: 'currentColor',
     },
-  }
+  },
+  '& .actualYearMarkLabel': { 
+    // This class is for the actual year's label specifically
+    position: 'absolute', // Keep as absolute to position in relation to the nearest positioned ancestor
+    top: '40px', // Positioning the label below the slider (you may need to adjust this value based on your layout)
+    left: '50%', // Centering the label relatively to its parent
+    transform: 'translateX(-50%)', // Ensures the centering by offsetting half of the element's width
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    lineHeight: 1.2,
+    fontSize: 12,
+    width: 40, 
+    height: 24, 
+    borderRadius: '3px', 
+    backgroundColor: '#1B1B1B',
+    color: '#FFFFFF', 
+    textAlign: 'center',
+    padding: '4px',
+    zIndex: 1, // Ensure the label is above other elements, adjust if needed based on your stacking context
+    '&:before': { // Changed to :before to position it above the label
+      // Pseudo-element for the 'speech bubble' arrow
+      content: '""',
+      position: 'absolute',
+      bottom: '100%', // Positioned at the top of the parent element
+      left: '50%',
+      transform: 'translateX(-50%)',
+      borderWidth: '6px', 
+      borderStyle: 'solid',
+      borderColor: 'transparent transparent #1B1B1B transparent', // Arrow pointing up
+      // Adjust colors and box-shadow as needed
+    },
+  },
+  '& .actualYearMark': { // We are targeting the specific style of the actualYear's mark
+    height: 8, // making it more prominent
+    width: 2,
+    backgroundColor: 'blue', // making it different and noticeable, change color as needed
+  },
+
 });
 
 
@@ -146,14 +184,16 @@ export default function CustomizedSlider(props) {
     buttonText = 'No More Rounds';
   }
 
-  // Conditionally create marks to show the actual year's position on the slider
   let actualYearMark = [];
   if (locked && actualYear) {
     actualYearMark = [{
       value: actualYear,
-      label: `${actualYear}`,  // This will display the year above the thumb
-    }];
-  }
+      label: (
+        <div className="actualYearMarkLabel">{actualYear}</div> // adding custom styled label
+      ),
+    className: "actualYearMark", // assigning the custom class to the mark
+  }];
+}
 
   return (
     <Box 
@@ -179,7 +219,7 @@ export default function CustomizedSlider(props) {
           getAriaValueText={valuetext}
         />
         {/* The Button component is now a direct child of the flex container, so it will be centered horizontally. */}
-        <Box sx={{ mt: 2 }}>
+        <Box sx={{ mt: 4 }}>
         <Button 
           variant="contained" 
           style={finalRound && isSubmitted ? disabledButtonStyle : normalButtonStyle}

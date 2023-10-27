@@ -19,7 +19,7 @@ export default function MainGame() {
     const [actualYear, setActualYear] = useState(null);
 
     const songs = [
-        { url: 'music/beatlesholdyourhand.mp3', description: '"I Want to Hold Your Hand" is a timeless classic by The Beatles, first released in 1963. The track marked a pivotal moment in the band\'s career, propelling them to international stardom and igniting Beatlemania. Written by John Lennon and Paul McCartney, the song\'s uplifting melody, enthusiastic vocals, and exuberant lyrics encapsulate the euphoria of new love and the desire for connection that is universally relatable.', cover: 'covers/beatlesholdyourhand.jpg', year: 1964, title: 'I Want to Hold Your Hand', artist: 'The Beatles', album: 'Meet the Beatles!' },
+        { url: 'music/beatlesholdyourhand.mp3', description: '"I Want to Hold Your Hand" is a timeless classic by The Beatles, first released in 1963. The track marked a pivotal moment in the band\'s career, propelling them to international stardom and igniting Beatlemania. Written by John Lennon and Paul McCartney, the song\'s uplifting melody, enthusiastic vocals, and exuberant lyrics encapsulate the euphoria of new love and the desire for connection that is universally relatable.', cover: 'covers/beatlesholdyourhand.jpg', year: 1963, title: 'I Want to Hold Your Hand', artist: 'The Beatles', album: 'Meet the Beatles!' },
         { url: 'music/kissmethruthephone.mp3', description: '"Kiss Me Thru the Phone" is a signature track from Soulja Boy Tell\'em, released in 2008, featuring emotive vocals from the R&B singer Sammie. This song, which quickly became a staple of late 2000s pop culture, blends hip-hop rhythms with elements of pop and R&B, creating an anthem for long-distance relationships in the digital age.', cover: 'covers/kissmethruthephone.jpg', year: 2008, title: 'Kiss Me Thru the Phone', artist: 'Soulja Boy', album: 'iSouljaBoyTellem' },
         { url: 'music/taylorswift22.mp3', description: '"22" is a song by American singer-songwriter Taylor Swift, from her fourth studio album, "Red" (2012). The song was released as the album\'s fourth single on March 12, 2013. Swift, known for her narrative songwriting, presents a buoyant track that reflects the ups and downs of the early twenties age.', cover: 'covers/taylorswift22.png', year: 2012, title: '22', artist: 'Taylor Swift', album: 'Red' },
         { url: 'music/TootTootTootsie.mp3', description: '"Toot, Toot, Tootsie (Goo\' Bye)" is a classic song that stands as a hallmark of early 20th-century music, originally recorded by Al Jolson. This song, widely popular in the 1920s, is a quintessential show tune, best known for its vibrant, catchy melody and spirited "goodbye" theme that almost anyone can sing along to.', cover: 'covers/TootTootTootsie.jpg', year: 1922, title: 'Toot, Toot, Tootsie (Goo\' Bye!)', artist: 'Al Jolson', album: '' },
@@ -50,17 +50,17 @@ export default function MainGame() {
         setUserGuess(newValue);
     };
 
-    const handleGuess = (guess) => {
+    const handleGuess = () => {
         const actualYear = currentSong.year;
-        const difference = Math.abs(actualYear - userGuess);
-
+        const difference = Math.abs(actualYear - userGuess); // Calculate the difference in years.
+    
         // Constants for calculation
         const maxScore = 1000;
-        const minDifference = 0; // when the user's guess is correct
-        const maxDifference = 20; // the point after which user gets a score of 0
-
+        const minDifference = 0; // When the user's guess is correct
+        const maxDifference = 20; // The point after which user gets a score of 0
+    
         let newScore;
-
+    
         if (difference === minDifference) {
             // The guess is correct.
             newScore = maxScore;
@@ -68,27 +68,33 @@ export default function MainGame() {
             // No points if 20 or more years off.
             newScore = 0;
         } else {
-            // Calculate the decay rate from the 1-year difference condition.
-            // We want the score to be around 800 for a 1-year difference.
-            // Solving the equation 800 = 1000 - decayRate * log(2), we get the approximate decay rate.
-            const targetScoreTwoYearDiff = 860;
-            const decayRate = (maxScore - targetScoreTwoYearDiff) / Math.log(2);
-
-            // Now apply the scoring formula for differences between 1 and 19 years.
-            newScore = Math.floor(maxScore - decayRate * Math.log(difference + 1)); // +1 to avoid log(0)
-
-            // Ensure the score doesn't go below 0 due to approximation, rounding.
+            // Initialize the score to the maximum possible.
+            newScore = maxScore;
+    
+            // Calculate the deduction for each year.
+            for (let i = 1; i <= difference; i++) {
+                // For each year, the penalty increases by 0.2% compared to the previous year.
+                // It starts at 3% for the first year off, then 3.2% for the second year, and so on.
+                const penaltyForThisYear = 3 + (i - 1) * 0.2; // This calculates the increased penalty.
+                
+                // Calculate the actual points to deduct for this year and subtract them from the current score.
+                const pointsDeducted = (penaltyForThisYear / 100) * maxScore;
+                newScore -= pointsDeducted;
+            }
+    
+            // Optional: Ensure the score doesn't go below 0 due to any unexpected behavior.
+            // (not necessary in this logic, but good as a safety measure).
             newScore = Math.max(newScore, 0);
         }
-
+    
         // Update the score state.
         setScore(newScore);
-
+    
         // Reveal song details after guessing
         setReveal(true);
-
+    
         // Set the actual year and lock the slider after the user makes a guess
-        setActualYear(currentSong.year);
+        setActualYear(actualYear);
         setSliderLocked(true);
     };
 
