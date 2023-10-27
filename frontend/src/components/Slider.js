@@ -25,9 +25,6 @@ ValueLabelComponent.propTypes = {
 
 const marks = [
   {
-    value: 1900,
-  },
-  {
     value: 1910,
   },
   {
@@ -59,9 +56,6 @@ const marks = [
   },
   {
     value: 2010,
-  },
-  {
-    value: 2023,
   }
 ];
 
@@ -109,13 +103,23 @@ const TimelineSlider = styled(Slider)({
     '& > *': {
       transform: 'rotate(45deg)',
     },
+    
   },
+  '& .MuiSlider-mark': {
+    backgroundColor: 'black',
+    height: 'inherit',
+    width: 1,
+    '&.MuiSlider-markActive': {
+      opacity: 1,
+      backgroundColor: 'currentColor',
+    },
+  }
 });
 
 
 export default function CustomizedSlider(props) {
 
-  const { value, onChange, onSubmit, onNextRound, finalRound } = props; // adding a new prop here for the next round
+  const { value, onChange, onSubmit, onNextRound, finalRound, locked, actualYear } = props;
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleClick = () => {
@@ -133,11 +137,20 @@ export default function CustomizedSlider(props) {
     buttonText = 'No More Rounds';
   }
 
+  // Conditionally create marks to show the actual year's position on the slider
+  let actualYearMark = [];
+  if (locked && actualYear) {
+    actualYearMark = [{
+      value: actualYear,
+      label: `${actualYear}`,  // This will display the year above the thumb
+    }];
+  }
+
   return (
     <Box 
       sx={{ 
         width: '80%', 
-        display: 'flex', // indicates we're using Flexbox
+        display: 'flex',
         flexDirection: 'column', // stacks children vertically
         alignItems: 'center', // centers children along the cross-axis, which is horizontal for a column-direction flex container
         justifyContent: 'center', // centers children along the main-axis (vertically, in this case)
@@ -147,9 +160,10 @@ export default function CustomizedSlider(props) {
       <TimelineSlider
         valueLabelDisplay="on"
         value={value}
-        onChange={onChange} // Set up an event handler to manage changes.
+        onChange={onChange} // <- here it's used, it will call handleSliderChange from MainGame
+        marks={locked ? actualYearMark : marks}
+        disabled={locked} // this makes the slider unmovable when it's true
         step={1}
-        marks={marks}
         min={1900}
         max={2023}
         aria-label="slider"
@@ -163,7 +177,7 @@ export default function CustomizedSlider(props) {
         onClick={handleClick}
         disabled={finalRound && isSubmitted} // Disable the button if it's the final round and the round is submitted
       >
-        {isSubmitted ? 'Next Round ->' : 'Submit'}
+        {buttonText}
       </Button>
       </Box>
     </Box>

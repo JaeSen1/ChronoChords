@@ -14,6 +14,9 @@ export default function MainGame() {
 
     const [userGuess, setUserGuess] = useState(1960); // initial value
 
+    const [sliderLocked, setSliderLocked] = useState(false);
+    const [actualYear, setActualYear] = useState(null);
+
     const songs = [
         { url: 'music/beatlesholdyourhand.mp3', cover: 'covers/beatlesholdyourhand.jpg', year: 1964, title: 'I Want to Hold Your Hand', artist: 'The Beatles', album: 'Meet the Beatles!' },
         { url: 'music/kissmethruthephone.mp3', cover: 'covers/kissmethruthephone.jpg', year: 2008, title: 'Kiss Me Thru the Phone', artist: 'Soulja Boy', album: 'iSouljaBoyTellem' },
@@ -31,51 +34,56 @@ export default function MainGame() {
             setSongIndex((songIndex + 1) % songs.length); // go to the next song, loop back to the first song if needed
             setScore(null); // reset the score
             setReveal(false); // hide details for the new round
+            setSliderLocked(false);
+            setActualYear(null); // Reset for the next round
         }
     };
 
-    // Handler for the slider change
     const handleSliderChange = (event, newValue) => {
         setUserGuess(newValue);
     };
 
     const handleGuess = (guess) => {
-    const actualYear = currentSong.year;
-    const difference = Math.abs(actualYear - userGuess);
+        const actualYear = currentSong.year;
+        const difference = Math.abs(actualYear - userGuess);
 
-    // Constants for calculation
-    const maxScore = 1000;
-    const minDifference = 0; // when the user's guess is correct
-    const maxDifference = 20; // the point after which user gets a score of 0
+        // Constants for calculation
+        const maxScore = 1000;
+        const minDifference = 0; // when the user's guess is correct
+        const maxDifference = 20; // the point after which user gets a score of 0
 
-    let newScore;
+        let newScore;
 
-    if (difference === minDifference) {
-        // The guess is correct.
-        newScore = maxScore;
-    } else if (difference >= maxDifference) {
-        // No points if 20 or more years off.
-        newScore = 0;
-    } else {
-        // Calculate the decay rate from the 1-year difference condition.
-        // We want the score to be around 800 for a 1-year difference.
-        // Solving the equation 800 = 1000 - decayRate * log(2), we get the approximate decay rate.
-        const targetScoreTwoYearDiff = 800;
-        const decayRate = (maxScore - targetScoreTwoYearDiff) / Math.log(2);
+        if (difference === minDifference) {
+            // The guess is correct.
+            newScore = maxScore;
+        } else if (difference >= maxDifference) {
+            // No points if 20 or more years off.
+            newScore = 0;
+        } else {
+            // Calculate the decay rate from the 1-year difference condition.
+            // We want the score to be around 800 for a 1-year difference.
+            // Solving the equation 800 = 1000 - decayRate * log(2), we get the approximate decay rate.
+            const targetScoreTwoYearDiff = 800;
+            const decayRate = (maxScore - targetScoreTwoYearDiff) / Math.log(2);
 
-        // Now apply the scoring formula for differences between 1 and 19 years.
-        newScore = Math.floor(maxScore - decayRate * Math.log(difference + 1)); // +1 to avoid log(0)
+            // Now apply the scoring formula for differences between 1 and 19 years.
+            newScore = Math.floor(maxScore - decayRate * Math.log(difference + 1)); // +1 to avoid log(0)
 
-        // Ensure the score doesn't go below 0 due to approximation, rounding.
-        newScore = Math.max(newScore, 0);
-    }
+            // Ensure the score doesn't go below 0 due to approximation, rounding.
+            newScore = Math.max(newScore, 0);
+        }
 
-    // Update the score state.
-    setScore(newScore);
+        // Update the score state.
+        setScore(newScore);
 
-    // Reveal song details after guessing
-    setReveal(true);
-};
+        // Reveal song details after guessing
+        setReveal(true);
+
+        // Set the actual year and lock the slider after the user makes a guess
+        setActualYear(currentSong.year);
+        setSliderLocked(true);
+    };
 
     return (
         <div className="App">
@@ -88,6 +96,8 @@ export default function MainGame() {
                     onSubmit={handleGuess} 
                     onNextRound={handleNextGame}
                     finalRound={round >= 5} // true if it's the final round, else false
+                    locked={sliderLocked}
+                    actualYear={actualYear}
                 />
             </div>
             <div className="Musicplayer-container">

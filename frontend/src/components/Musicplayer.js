@@ -132,17 +132,11 @@ export default function MusicPlayerSlider({ url, songDetails, reveal }) {
     const secondLeft = roundedValue - minute * 60;
     return `${minute}:${secondLeft < 10 ? `0${secondLeft}` : secondLeft}`;
   }
-
-  useEffect(() => {
-    console.log('Position:', position);
-    console.log('Paused:', paused);
-    console.log('Volume:', volume);
-    console.log('File:', url);
-  }, [position, paused, volume, url]);
   
   const mainIconColor = theme.palette.mode === 'dark' ? '#fff' : '#000';
   const lightIconColor =
-    theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)';
+  theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)';
+  
   return (
     <Box sx={{ width: '100%', overflow: 'hidden'}}>
     <WallPaper/>
