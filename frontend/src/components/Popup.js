@@ -3,17 +3,6 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { styled } from '@mui/system'; // Import styled for the Image container
-
-
-const ImageContainer = styled('div')({  // Style the image container
-  height: '200px', // Or any other size
-  width: '100%',
-  marginBottom: '16px',
-  backgroundSize: 'cover',
-  backgroundRepeat: 'no-repeat',
-  backgroundPosition: 'center',
-});
 
 const style = {
   position: 'absolute',
@@ -30,16 +19,7 @@ const style = {
 };
 
 export default function BasicModal({ open, onClose, songData }) {
-  
-  const buttonStyle1 = {
-    position:'absolute',
-    top: '10px',
-    right: '10px',
-  };
-  const buttonStyle2 = {
-    top: '550px',
 
-  };
   return (
     <div>
       <Modal
@@ -60,9 +40,6 @@ export default function BasicModal({ open, onClose, songData }) {
           <Typography variant="subtitle1" color="text.secondary" marginBottom="2">
             {songData.album}
           </Typography>
-
-          {/* Cover image */}
-          <ImageContainer style={{ backgroundImage: `url(${songData.cover})` }} />
 
           {/* Description section */}
           <Typography id="modal-modal-description" sx={{ mt: 2, wordWrap: 'break-word' }}>

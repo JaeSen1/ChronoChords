@@ -58,6 +58,16 @@ const marks = [
   }
 ];
 
+const normalButtonStyle = {
+  backgroundColor: '#1B1B1B', 
+  color: '#FFFFFF',
+};
+
+const disabledButtonStyle = {
+  backgroundColor: '#D3D3D3',
+  color: '#A9A9A9',
+};
+
 function valuetext(value) {
     return `${value}`;
   }
@@ -172,7 +182,7 @@ export default function CustomizedSlider(props) {
         <Box sx={{ mt: 2 }}>
         <Button 
           variant="contained" 
-          style={{ backgroundColor: '#1B1B1B', color: '#FFFFFF' }}
+          style={finalRound && isSubmitted ? disabledButtonStyle : normalButtonStyle}
           onClick={handleClick}
           disabled={finalRound && isSubmitted} // Disable the button if it's the final round and the round is submitted
         >
