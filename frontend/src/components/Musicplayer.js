@@ -84,7 +84,7 @@ const TinyText = styled(Typography)({
   letterSpacing: 0.2,
 });
 
-export default function MusicPlayerSlider({ url, songDetails, reveal }) {
+export default function MusicPlayerSlider({ url, songDetails, reveal, onMoreInfo }) {
   const playerRef = useRef(null);
   const theme = useTheme();
   const [duration, setDuration] = useState(0); // total duration of the audio
@@ -159,32 +159,49 @@ export default function MusicPlayerSlider({ url, songDetails, reveal }) {
           </CoverImage>
 
           {/* Container for the text, you want this to take the rest of the space to the right */}
-          <Box sx={{ 
+          <Box
+            sx={{ 
               ml: 10,  // margin left to give some space between image and text
               flexGrow: 1,  // allow this box to grow and consume the remaining space in the flex container
               display: 'flex', 
               flexDirection: 'column', 
-              alignItems: 'flex-start',  // content aligned to the start of the box (change to 'flex-end' if you want it aligned to the right)
+              alignItems: 'flex-start',  // content aligned to the start of the box
               minWidth: 0,  // ensures the box can shrink below its minimum content size if necessary
+              position: 'relative',  // set position relative to allow absolute positioning within this box
             }}
           >
-            <Typography variant="caption" color="text.secondary" fontWeight={500}>
-              {displayArtist}  {/* Updated */}
-            </Typography>
-            <Typography noWrap>
-              <b>{displayTitle}</b>  {/* Updated */}
-            </Typography>
-            <Typography noWrap letterSpacing={-0.25}>
-              {displayAlbum}  {/* Updated */}
-            </Typography>
-
-            <Button 
-              variant="contained" 
-              style={{ backgroundColor: '#1B1B1B', color: '#FFFFFF' }}
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+              }}
             >
-              More Info
-            </Button>
-            
+              <Typography variant="caption" color="text.secondary" fontWeight={500}>
+                {displayArtist}
+              </Typography>
+              <Typography noWrap>
+                <b>{displayTitle}</b>
+              </Typography>
+              <Typography noWrap letterSpacing={-0.25}>
+                {displayAlbum}
+              </Typography>
+            </Box>
+
+            {/* Positioned the button absolutely within the parent box, and moved it down */}
+            <Box
+              sx={{ 
+                position: 'absolute',  // position the button absolutely
+                bottom: '-100%',  // position at the bottom with offset to move it outside the container
+                left: 0,  // position on the left side of the container
+              }}
+            >
+              {reveal && (
+                <Button variant="contained" style={{ backgroundColor: '#1B1B1B', color: '#FFFFFF', mt: 1 }} onClick={onMoreInfo}>
+                  More Info
+                </Button>
+              )}
+            </Box>
           </Box>
         </Box>
   

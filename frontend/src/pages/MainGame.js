@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import Slider from '../components/Slider';
 import MusicPlayer from '../components/MusicPlayer';
 import RoundCount from '../components/RoundCount';
+import Popup from '../components/Popup';
 import ScoreDisplay from '../components/ScoreDisplay';
 
 
@@ -26,6 +27,12 @@ export default function MainGame() {
     ]
     
     const currentSong = songs[songIndex];
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleOpenModal = () => {
+        setIsModalOpen(true);
+    };
 
     // 2. Handle advancing to the next game/round
     const handleNextGame = () => {
@@ -110,6 +117,17 @@ export default function MainGame() {
                     album: currentSong.album,
                 }}
                 reveal={reveal}
+                onMoreInfo={handleOpenModal}  // Passing the function to open the modal
+            />
+            <Popup
+                songData={{
+                    title: currentSong.title,
+                    artist: currentSong.artist,
+                    album: currentSong.album,
+                    description: currentSong.description
+                }}
+                open={isModalOpen} 
+                onClose={() => setIsModalOpen(false)}  // Function to close the modal
             />
             </div>
         </div>

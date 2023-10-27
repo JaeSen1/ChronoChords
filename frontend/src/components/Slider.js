@@ -156,28 +156,28 @@ export default function CustomizedSlider(props) {
       }}
     >
       <Box sx={{ m: 3 }} />
-      <TimelineSlider
-        valueLabelDisplay="on"
-        value={value}
-        onChange={onChange} // <- here it's used, it will call handleSliderChange from MainGame
-        marks={locked ? actualYearMark : marks}
-        disabled={locked} // this makes the slider unmovable when it's true
-        step={1}
-        min={1900}
-        max={2023}
-        aria-label="slider"
-        getAriaValueText={valuetext}
-      />
-      {/* The Button component is now a direct child of the flex container, so it will be centered horizontally. */}
-      <Box sx={{ mt: 2 }}>
-      <Button 
-        variant="contained" 
-        style={{ backgroundColor: '#1B1B1B', color: '#FFFFFF' }}
-        onClick={handleClick}
-        disabled={finalRound && isSubmitted} // Disable the button if it's the final round and the round is submitted
-      >
-        {buttonText}
-      </Button>
+        <TimelineSlider
+          valueLabelDisplay="on"
+          value={value}
+          onChange={onChange} // <- here it's used, it will call handleSliderChange from MainGame
+          marks={locked ? actualYearMark : marks}
+          disabled={locked} // this makes the slider unmovable when it's true
+          step={1}
+          min={1900}
+          max={2023}
+          aria-label="slider"
+          getAriaValueText={valuetext}
+        />
+        {/* The Button component is now a direct child of the flex container, so it will be centered horizontally. */}
+        <Box sx={{ mt: 2 }}>
+        <Button 
+          variant="contained" 
+          style={{ backgroundColor: '#1B1B1B', color: '#FFFFFF' }}
+          onClick={handleClick}
+          disabled={finalRound && isSubmitted} // Disable the button if it's the final round and the round is submitted
+        >
+          {buttonText}
+        </Button>
       </Box>
     </Box>
   );
