@@ -115,12 +115,23 @@ const TimelineSlider = styled(Slider)({
 
 export default function CustomizedSlider(props) {
 
-  const { value, onChange, onSubmit } = props;
+  const { value, onChange, onSubmit, onNextRound, finalRound } = props; // adding a new prop here for the next round
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
-  // This function will be triggered when the "Submit" button is clicked.
-  const handleSubmit = () => {
-    onSubmit(); // Call the submit function passed from the parent component
+  const handleClick = () => {
+    if (!isSubmitted) {
+      onSubmit(); // This is called when the user submits their guess
+      setIsSubmitted(true);
+    } else {
+      onNextRound(); // This is called to proceed to the next round
+      setIsSubmitted(false); // Reset for the next question
+    }
   };
+
+  let buttonText = isSubmitted ? 'Next Round ->' : 'Submit';
+  if (finalRound && isSubmitted) {
+    buttonText = 'No More Rounds';
+  }
 
   return (
     <Box 
@@ -146,13 +157,14 @@ export default function CustomizedSlider(props) {
       />
       {/* The Button component is now a direct child of the flex container, so it will be centered horizontally. */}
       <Box sx={{ mt: 2 }}>
-        <Button 
-          variant="contained" 
-          color="primary" 
-          onClick={handleSubmit}
-        >
-          Submit
-        </Button>
+      <Button 
+        variant="contained" 
+        color="primary" 
+        onClick={handleClick}
+        disabled={finalRound && isSubmitted} // Disable the button if it's the final round and the round is submitted
+      >
+        {isSubmitted ? 'Next Round ->' : 'Submit'}
+      </Button>
       </Box>
     </Box>
   );
