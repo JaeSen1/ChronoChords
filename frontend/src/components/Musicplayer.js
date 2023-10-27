@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Slider from '@mui/material/Slider';
 import IconButton from '@mui/material/IconButton';
@@ -11,6 +12,7 @@ import VolumeUpRounded from '@mui/icons-material/VolumeUpRounded';
 import VolumeDownRounded from '@mui/icons-material/VolumeDownRounded';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import ReactPlayer from 'react-player';
+
 
 const WallPaper = styled('div')( {
     position: 'absolute',
@@ -136,7 +138,7 @@ export default function MusicPlayerSlider({ url, songDetails, reveal }) {
   const mainIconColor = theme.palette.mode === 'dark' ? '#fff' : '#000';
   const lightIconColor =
   theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)';
-  
+
   return (
     <Box sx={{ width: '100%', overflow: 'hidden'}}>
     <WallPaper/>
@@ -175,6 +177,14 @@ export default function MusicPlayerSlider({ url, songDetails, reveal }) {
             <Typography noWrap letterSpacing={-0.25}>
               {displayAlbum}  {/* Updated */}
             </Typography>
+
+            <Button 
+              variant="contained" 
+              style={{ backgroundColor: '#1B1B1B', color: '#FFFFFF' }}
+            >
+              More Info
+            </Button>
+            
           </Box>
         </Box>
   

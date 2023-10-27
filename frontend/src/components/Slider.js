@@ -1,8 +1,7 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import Slider, { SliderThumb } from '@mui/material/Slider';
+import Slider from '@mui/material/Slider';
 import { styled } from '@mui/material/styles';
-import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -149,7 +148,7 @@ export default function CustomizedSlider(props) {
   return (
     <Box 
       sx={{ 
-        width: '80%', 
+        width: '100%', 
         display: 'flex',
         flexDirection: 'column', // stacks children vertically
         alignItems: 'center', // centers children along the cross-axis, which is horizontal for a column-direction flex container
@@ -173,7 +172,7 @@ export default function CustomizedSlider(props) {
       <Box sx={{ mt: 2 }}>
       <Button 
         variant="contained" 
-        color="primary" 
+        style={{ backgroundColor: '#1B1B1B', color: '#FFFFFF' }}
         onClick={handleClick}
         disabled={finalRound && isSubmitted} // Disable the button if it's the final round and the round is submitted
       >
