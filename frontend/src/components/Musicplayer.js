@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Slider from '@mui/material/Slider';
 import IconButton from '@mui/material/IconButton';
@@ -9,8 +10,10 @@ import PauseRounded from '@mui/icons-material/PauseRounded';
 import PlayArrowRounded from '@mui/icons-material/PlayArrowRounded';
 import VolumeUpRounded from '@mui/icons-material/VolumeUpRounded';
 import VolumeDownRounded from '@mui/icons-material/VolumeDownRounded';
+import ReplayRounded from '@mui/icons-material/ReplayRounded';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import ReactPlayer from 'react-player';
+
 
 const WallPaper = styled('div')( {
     position: 'absolute',
@@ -82,17 +85,20 @@ const TinyText = styled(Typography)({
   letterSpacing: 0.2,
 });
 
-export default function MusicPlayerSlider() {
+export default function MusicPlayerSlider({ url, songDetails, reveal, onMoreInfo }) {
   const playerRef = useRef(null);
   const theme = useTheme();
   const [duration, setDuration] = useState(0); // total duration of the audio
   const [position, setPosition] = useState(0); // current position of the audio
   const [volume, setVolume] = React.useState(0.3); // Volume is between 0 and 1
 
+  // You can use the 'reveal' prop to decide whether to show song details or placeholders.
+  const displayCover = songDetails.cover;
+  const displayArtist = reveal ? songDetails.artist : '?????????';
+  const displayTitle = reveal ? songDetails.title : '?????????';
+  const displayAlbum = reveal ? songDetails.album : '?????????';
+
   const [isSeeking, setIsSeeking] = useState(false);
-
-
-  const [url, setUrl] = useState('kissmethruthephone.mp3'); // <-- set the path to your audio file here
 
   // This handler updates the 'position' as the audio plays
   const handleProgress = (progress) => {
@@ -107,21 +113,41 @@ export default function MusicPlayerSlider() {
     setDuration(duration);
   };
 
-  // Adjust the position when the user drags the slider
   const handleSeekChange = (e, newValue) => {
-  setIsSeeking(true); // User starts seeking
-  setPosition(newValue); // Update the position immediately for responsiveness
-};
+    // Update the position immediately for responsiveness
+    setPosition(newValue);
+  };
 
-  // Seek the position when the user stops dragging the slider
+  const handleSeekMouseDown = () => {
+    setIsSeeking(true); // User starts seeking
+  };
+  
   const handleSeekMouseUp = (e, newValue) => {
+    setIsSeeking(false); // Seeking is finished
     if (playerRef.current) {
       playerRef.current.seekTo(newValue); // Seek the player to the new position
     }
-    setIsSeeking(false); // Seeking is finished
   };
 
   const [paused, setPaused] = React.useState(true);
+  const [hasEnded, setHasEnded] = React.useState(false);
+
+  const handleSongEnded = () => {
+    setHasEnded(true);
+  };
+
+  const togglePlayback = () => {
+    if (hasEnded) {
+      if (playerRef.current) {
+        playerRef.current.seekTo(0); // Seek to the start of the track
+      }
+      setHasEnded(false); // Reset the 'hasEnded' flag
+      setPaused(false); // Set to play
+    } else {
+      setPaused(!paused); // Toggle play/pause
+    }
+  };
+
 
   function formatDuration(value) {
     const roundedValue = Math.floor(value);  // rounding down the time to display
@@ -129,17 +155,11 @@ export default function MusicPlayerSlider() {
     const secondLeft = roundedValue - minute * 60;
     return `${minute}:${secondLeft < 10 ? `0${secondLeft}` : secondLeft}`;
   }
-
-  useEffect(() => {
-    console.log('Position:', position);
-    console.log('Paused:', paused);
-    console.log('Volume:', volume);
-    console.log('File:', url);
-  }, [position, paused, volume, url]);
   
   const mainIconColor = theme.palette.mode === 'dark' ? '#fff' : '#000';
   const lightIconColor =
-    theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)';
+  theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)';
+
   return (
     <Box sx={{ width: '100%', overflow: 'hidden'}}>
     <WallPaper/>
@@ -149,28 +169,60 @@ export default function MusicPlayerSlider() {
           
           {/* Your cover image component - No changes here */}
           <CoverImage>
-            <QuestionMarkIcon/>
+            {reveal ? (
+              <img
+                alt={displayTitle}
+                src={displayCover}
+              />
+            ) : (
+              <QuestionMarkIcon style={{ fontSize: 100 }} />
+            )}
           </CoverImage>
 
           {/* Container for the text, you want this to take the rest of the space to the right */}
-          <Box sx={{ 
+          <Box
+            sx={{ 
               ml: 10,  // margin left to give some space between image and text
               flexGrow: 1,  // allow this box to grow and consume the remaining space in the flex container
               display: 'flex', 
               flexDirection: 'column', 
-              alignItems: 'flex-start',  // content aligned to the start of the box (change to 'flex-end' if you want it aligned to the right)
+              alignItems: 'flex-start',  // content aligned to the start of the box
               minWidth: 0,  // ensures the box can shrink below its minimum content size if necessary
+              position: 'relative',  // set position relative to allow absolute positioning within this box
             }}
           >
-            <Typography variant="caption" color="text.secondary" fontWeight={500}>
-              Artist Name
-            </Typography>
-            <Typography noWrap>
-              <b>Song Name Goes Here</b>
-            </Typography>
-            <Typography noWrap letterSpacing={-0.25}>
-              Album Name Goes Here
-            </Typography>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+              }}
+            >
+              <Typography variant="caption" color="text.secondary" fontWeight={500}>
+                {displayArtist}
+              </Typography>
+              <Typography noWrap>
+                <b>{displayTitle}</b>
+              </Typography>
+              <Typography noWrap letterSpacing={-0.25}>
+                {displayAlbum}
+              </Typography>
+            </Box>
+
+            {/* Positioned the button absolutely within the parent box, and moved it down */}
+            <Box
+              sx={{ 
+                position: 'absolute',  // position the button absolutely
+                bottom: '-100%',  // position at the bottom with offset to move it outside the container
+                left: 0,  // position on the left side of the container
+              }}
+            >
+              {reveal && (
+                <Button variant="contained" style={{ backgroundColor: '#1B1B1B', color: '#FFFFFF', mt: 1 }} onClick={onMoreInfo}>
+                  More Info
+                </Button>
+              )}
+            </Box>
           </Box>
         </Box>
   
@@ -181,6 +233,7 @@ export default function MusicPlayerSlider() {
           playing={!paused} // play or pause the track based on 'paused' state
           onDuration={handleDuration} // get the duration of the audio
           onProgress={handleProgress} // get the current position of the audio
+          onEnded={handleSongEnded}
           volume={volume} // Control the player's volume
           width="0" // Setting width and height as 0 to hide the player's default UI
           height="0"
@@ -194,6 +247,7 @@ export default function MusicPlayerSlider() {
           min={0}
           max={duration} // Set maximum value as the duration of the audio
           onChange={handleSeekChange} // While dragging the slider
+          onMouseDown={handleSeekMouseDown}
           onChangeCommitted={handleSeekMouseUp} // When the dragging ends
           sx={{
             color: theme.palette.mode === 'dark' ? '#fff' : 'rgba(0,0,0,0.87)',
@@ -241,19 +295,15 @@ export default function MusicPlayerSlider() {
             mt: -1,
           }}
         >
-          <IconButton
-            aria-label={paused ? 'play' : 'pause'}
-            onClick={() => setPaused(!paused)}
-          >
-            {paused ? (
-              <PlayArrowRounded
-                sx={{ fontSize: '3rem' }}
-                htmlColor={mainIconColor}
-              />
-            ) : (
-              <PauseRounded sx={{ fontSize: '3rem' }} htmlColor={mainIconColor} />
-            )}
-          </IconButton>
+        <IconButton aria-label={hasEnded ? 'rewind' : paused ? 'play' : 'pause'} onClick={togglePlayback}>
+          {hasEnded ? (
+            <ReplayRounded sx={{ fontSize: '3rem' }} htmlColor={mainIconColor} /> // This icon is hypothetical, you can use any "rewind" icon
+          ) : paused ? (
+            <PlayArrowRounded sx={{ fontSize: '3rem' }} htmlColor={mainIconColor} />
+          ) : (
+            <PauseRounded sx={{ fontSize: '3rem' }} htmlColor={mainIconColor} />
+          )}
+        </IconButton>
         </Box>
         <Stack spacing={2} direction="row" sx={{ mb: 1, px: 1 }} alignItems="center">
           <VolumeDownRounded htmlColor={lightIconColor} />

@@ -9,44 +9,41 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
+  width: '70%', // or choose a size that fits your needs
+  maxWidth: '600px', // Avoid the modal getting too large on big screens
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
   p: 4,
+  overflowY: 'auto', // Ensures the modal scrolls if content is too big
 };
 
-export default function BasicModal() {
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const buttonStyle1 = {
-    position:'absolute',
-    top: '10px',
-    right: '10px',
-  };
-  const buttonStyle2 = {
-    top: '550px',
+export default function BasicModal({ open, onClose, songData }) {
 
-  };
   return (
     <div>
-      <Button style={buttonStyle2} onClick={handleOpen}>Song Info</Button>
       <Modal
         open={open}
-        onClose={handleClose}
+        onClose={onClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>          
-        <Button style={buttonStyle1} className='close-modal' onClick={handleClose}> 
-            Close
-          </Button>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Song Title:
+        <Box sx={style}>
+          <Button style={{ position:'absolute', top: '10px', right: '10px' }} onClick={onClose}>Close</Button>
+
+          {/* Song title and artist */}
+          <Typography id="modal-modal-title" variant="h6" component="h2" marginBottom="2">
+            {songData.title} - {songData.artist}
           </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Example information about the song
+
+          {/* Album name */}
+          <Typography variant="subtitle1" color="text.secondary" marginBottom="2">
+            {songData.album}
+          </Typography>
+
+          {/* Description section */}
+          <Typography id="modal-modal-description" sx={{ mt: 2, wordWrap: 'break-word' }}>
+            {songData.description} {/* Placeholder for real description */}
           </Typography>
         </Box>
       </Modal>
