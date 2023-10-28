@@ -226,7 +226,7 @@ export default function CustomizedSlider(props) {
         justifyContent: 'center', // centers children along the main-axis (vertically, in this case)
       }}
     >
-    <Box sx={{ m: 3 }} />
+    <Box sx={{ m: 0 }} />
       <TimelineSlider
         valueLabelDisplay="on"
         value={value}

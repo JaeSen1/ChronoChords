@@ -10,6 +10,7 @@ import PauseRounded from '@mui/icons-material/PauseRounded';
 import PlayArrowRounded from '@mui/icons-material/PlayArrowRounded';
 import VolumeUpRounded from '@mui/icons-material/VolumeUpRounded';
 import VolumeDownRounded from '@mui/icons-material/VolumeDownRounded';
+import ReplayRounded from '@mui/icons-material/ReplayRounded';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import ReactPlayer from 'react-player';
 
@@ -112,21 +113,41 @@ export default function MusicPlayerSlider({ url, songDetails, reveal, onMoreInfo
     setDuration(duration);
   };
 
-  // Adjust the position when the user drags the slider
   const handleSeekChange = (e, newValue) => {
-  setIsSeeking(true); // User starts seeking
-  setPosition(newValue); // Update the position immediately for responsiveness
-};
+    // Update the position immediately for responsiveness
+    setPosition(newValue);
+  };
 
-  // Seek the position when the user stops dragging the slider
+  const handleSeekMouseDown = () => {
+    setIsSeeking(true); // User starts seeking
+  };
+  
   const handleSeekMouseUp = (e, newValue) => {
+    setIsSeeking(false); // Seeking is finished
     if (playerRef.current) {
       playerRef.current.seekTo(newValue); // Seek the player to the new position
     }
-    setIsSeeking(false); // Seeking is finished
   };
 
   const [paused, setPaused] = React.useState(true);
+  const [hasEnded, setHasEnded] = React.useState(false);
+
+  const handleSongEnded = () => {
+    setHasEnded(true);
+  };
+
+  const togglePlayback = () => {
+    if (hasEnded) {
+      if (playerRef.current) {
+        playerRef.current.seekTo(0); // Seek to the start of the track
+      }
+      setHasEnded(false); // Reset the 'hasEnded' flag
+      setPaused(false); // Set to play
+    } else {
+      setPaused(!paused); // Toggle play/pause
+    }
+  };
+
 
   function formatDuration(value) {
     const roundedValue = Math.floor(value);  // rounding down the time to display
@@ -212,6 +233,7 @@ export default function MusicPlayerSlider({ url, songDetails, reveal, onMoreInfo
           playing={!paused} // play or pause the track based on 'paused' state
           onDuration={handleDuration} // get the duration of the audio
           onProgress={handleProgress} // get the current position of the audio
+          onEnded={handleSongEnded}
           volume={volume} // Control the player's volume
           width="0" // Setting width and height as 0 to hide the player's default UI
           height="0"
@@ -225,6 +247,7 @@ export default function MusicPlayerSlider({ url, songDetails, reveal, onMoreInfo
           min={0}
           max={duration} // Set maximum value as the duration of the audio
           onChange={handleSeekChange} // While dragging the slider
+          onMouseDown={handleSeekMouseDown}
           onChangeCommitted={handleSeekMouseUp} // When the dragging ends
           sx={{
             color: theme.palette.mode === 'dark' ? '#fff' : 'rgba(0,0,0,0.87)',
@@ -272,19 +295,15 @@ export default function MusicPlayerSlider({ url, songDetails, reveal, onMoreInfo
             mt: -1,
           }}
         >
-          <IconButton
-            aria-label={paused ? 'play' : 'pause'}
-            onClick={() => setPaused(!paused)}
-          >
-            {paused ? (
-              <PlayArrowRounded
-                sx={{ fontSize: '3rem' }}
-                htmlColor={mainIconColor}
-              />
-            ) : (
-              <PauseRounded sx={{ fontSize: '3rem' }} htmlColor={mainIconColor} />
-            )}
-          </IconButton>
+        <IconButton aria-label={hasEnded ? 'rewind' : paused ? 'play' : 'pause'} onClick={togglePlayback}>
+          {hasEnded ? (
+            <ReplayRounded sx={{ fontSize: '3rem' }} htmlColor={mainIconColor} /> // This icon is hypothetical, you can use any "rewind" icon
+          ) : paused ? (
+            <PlayArrowRounded sx={{ fontSize: '3rem' }} htmlColor={mainIconColor} />
+          ) : (
+            <PauseRounded sx={{ fontSize: '3rem' }} htmlColor={mainIconColor} />
+          )}
+        </IconButton>
         </Box>
         <Stack spacing={2} direction="row" sx={{ mb: 1, px: 1 }} alignItems="center">
           <VolumeDownRounded htmlColor={lightIconColor} />
