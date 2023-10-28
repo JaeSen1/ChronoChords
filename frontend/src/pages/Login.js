@@ -1,4 +1,6 @@
 import * as React from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,6 +14,7 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+
 
 function Copyright(props) {
   return (
@@ -29,14 +32,31 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function SignInSide() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-  };
+    const navigate = useNavigate();
+    const [email, setEmail] = React.useState("");
+    const [password, setPassword] = React.useState("");
+
+    async function handleSubmit(event) {
+      event.preventDefault();
+      try {
+          const response = await axios.post("http://localhost:8080/api/registration/login", {
+              email: email,
+              password: password,
+          });
+  
+          console.log(response.data);
+  
+          if (response.data.message === "Email not exits") {
+              alert("Email does not exist");
+          } else if (response.data.message === "Login Success") {
+              navigate('/home');
+          } else {
+              alert("Incorrect Email or Password");
+          }
+      } catch (err) {
+          alert(err);
+      }
+    }
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -73,30 +93,34 @@ export default function SignInSide() {
               Sign in
             </Typography>
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                autoFocus
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-              />
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              />
+    <TextField
+        margin="normal"
+        required
+        fullWidth
+        id="email"
+        label="Email Address"
+        name="email"
+        autoComplete="email"
+        autoFocus
+        value={email}
+        onChange={(event) => setEmail(event.target.value)}
+    />
+    <TextField
+        margin="normal"
+        required
+        fullWidth
+        name="password"
+        label="Password"
+        type="password"
+        id="password"
+        autoComplete="current-password"
+        value={password}
+        onChange={(event) => setPassword(event.target.value)}
+    />
+    <FormControlLabel
+        control={<Checkbox value="remember" color="primary" />}
+        label="Remember me"
+    />
               <Button
                 type="submit"
                 fullWidth
