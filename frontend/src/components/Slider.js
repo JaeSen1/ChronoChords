@@ -5,6 +5,9 @@ import { styled } from '@mui/material/styles';
 import Tooltip from '@mui/material/Tooltip';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import CloseIcon from '@mui/icons-material/Close';
+import CheckIcon from '@mui/icons-material/Check';
+
 import { useState } from 'react';
 
 function ValueLabelComponent(props) {
@@ -72,14 +75,14 @@ function valuetext(value) {
     return `${value}`;
   }
 
-const TimelineSlider = styled(Slider)({
+const TimelineSlider = styled(Slider)(({ theme, correctGuess }) => ({
   color: 'grey',
   width: 1200,
   height: 43,
   marginTop: 150,
   '& .MuiSlider-track': {
     border: 'none',
-    backgroundColor: '#EF9F9F'
+    backgroundColor: correctGuess ? '#B4EF9F' : '#EF9F9F', // dynamic color based on the correct guess
   },
   '& .MuiSlider-thumb': {
     height: 65,
@@ -126,7 +129,7 @@ const TimelineSlider = styled(Slider)({
   '& .actualYearMarkLabel': { 
     // This class is for the actual year's label specifically
     position: 'absolute', // Keep as absolute to position in relation to the nearest positioned ancestor
-    top: '40px', // Positioning the label below the slider (you may need to adjust this value based on your layout)
+    top: '45px', // Positioning the label below the slider (you may need to adjust this value based on your layout)
     left: '50%', // Centering the label relatively to its parent
     transform: 'translateX(-50%)', // Ensures the centering by offsetting half of the element's width
     display: 'flex',
@@ -161,13 +164,15 @@ const TimelineSlider = styled(Slider)({
     backgroundColor: 'blue', // making it different and noticeable, change color as needed
   },
 
-});
+}));
 
 
 export default function CustomizedSlider(props) {
 
   const { value, onChange, onSubmit, onNextRound, finalRound, locked, actualYear } = props;
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const correctGuess = locked && value === actualYear;
 
   const handleClick = () => {
     if (!isSubmitted) {
@@ -186,14 +191,30 @@ export default function CustomizedSlider(props) {
 
   let actualYearMark = [];
   if (locked && actualYear) {
+    const Icon = correctGuess ? CheckIcon : CloseIcon; // Choose the icon based on 'correctGuess'.
+    const iconColor = correctGuess ? 'green' : 'red'; // Choose the color based on 'correctGuess'.
+    const iconTopPosition = correctGuess ? '-110px' : '-50px'; // Adjust the top position based on 'correctGuess'.
+
     actualYearMark = [{
       value: actualYear,
       label: (
-        <div className="actualYearMarkLabel">{actualYear}</div> // adding custom styled label
+        <div style={{ position: 'relative', width: 60, height: 50 }}> {/* Increased height to accommodate icon */}
+          <Icon style={{ 
+            color: iconColor, 
+            position: 'absolute', 
+            top: iconTopPosition,  // Conditional positioning here
+            left: '50%',
+            transform: 'translateX(-50%)',
+            fontSize: '2rem',  // Optional: adjust icon size as necessary
+          }} />
+          <div className="actualYearMarkLabel" style={{ position: 'absolute', bottom: 0, width: '100%' }}>
+            {correctGuess ? <span style={{ fontSize: '10px' }}>PERFECT</span> : actualYear.toString()}
+          </div>
+        </div>
       ),
-    className: "actualYearMark", // assigning the custom class to the mark
-  }];
-}
+      className: "actualYearMark",
+    }];
+  }
 
   return (
     <Box 
@@ -205,21 +226,22 @@ export default function CustomizedSlider(props) {
         justifyContent: 'center', // centers children along the main-axis (vertically, in this case)
       }}
     >
-      <Box sx={{ m: 3 }} />
-        <TimelineSlider
-          valueLabelDisplay="on"
-          value={value}
-          onChange={onChange} // <- here it's used, it will call handleSliderChange from MainGame
-          marks={locked ? actualYearMark : marks}
-          disabled={locked} // this makes the slider unmovable when it's true
-          step={1}
-          min={1900}
-          max={2023}
-          aria-label="slider"
-          getAriaValueText={valuetext}
-        />
-        {/* The Button component is now a direct child of the flex container, so it will be centered horizontally. */}
-        <Box sx={{ mt: 4 }}>
+    <Box sx={{ m: 3 }} />
+      <TimelineSlider
+        valueLabelDisplay="on"
+        value={value}
+        onChange={onChange} // <- here it's used, it will call handleSliderChange from MainGame
+        marks={locked ? actualYearMark : marks}
+        disabled={locked} // this makes the slider unmovable when it's true
+        step={1}
+        min={1900}
+        max={2023}
+        aria-label="slider"
+        getAriaValueText={valuetext}
+        correctGuess={correctGuess} // <-- passing the new prop here
+      />
+      {/* The Button component is now a direct child of the flex container, so it will be centered horizontally. */}
+      <Box sx={{ mt: 4 }}>
         <Button 
           variant="contained" 
           style={finalRound && isSubmitted ? disabledButtonStyle : normalButtonStyle}

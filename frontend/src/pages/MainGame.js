@@ -43,6 +43,7 @@ export default function MainGame() {
             setReveal(false); // hide details for the new round
             setSliderLocked(false);
             setActualYear(null); // Reset for the next round
+            setUserGuess(1960);
         }
     };
 
