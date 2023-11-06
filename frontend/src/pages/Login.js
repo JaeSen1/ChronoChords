@@ -15,9 +15,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useState } from "react";
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
-import axios from "axios";
 
 
 function Copyright(props) {
