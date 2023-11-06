@@ -12,6 +12,10 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useState } from "react";
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../AuthContext';
+import axios from "axios";
 
 function Copyright(props) {
   return (
@@ -24,19 +28,43 @@ function Copyright(props) {
   );
 }
 
-// TODO remove, this demo shouldn't need to reset the theme.
-
 const defaultTheme = createTheme();
 
 export default function SignInSide() {
-  const handleSubmit = (event) => {
+
+  const { login } = useAuth();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  async function Login(event) {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-  };
+    try {
+      await axios.post("http://localhost:8085/api/v1/user/login", {
+        email: email,
+        password: password,
+      }).then((res) => {
+        console.log(res.data);
+
+        if (res.data.message === "Email does not exist") {
+          alert("Email does not exist");
+        }
+        else if (res.data.message === "Login Success") {
+          navigate('/');
+          const user = { username: res.data.username };
+          login(user);
+        } 
+        else {
+          alert("Incorrect email and password");
+        }
+      }, fail => {
+        console.error(fail);
+      });
+    } catch(err) {
+      alert(err);
+    }
+  }
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -72,7 +100,7 @@ export default function SignInSide() {
             <Typography component="h1" variant="h5">
               Sign in
             </Typography>
-            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+            <Box component="form" noValidate onSubmit={Login} sx={{ mt: 1 }}>
               <TextField
                 margin="normal"
                 required
@@ -82,6 +110,10 @@ export default function SignInSide() {
                 name="email"
                 autoComplete="email"
                 autoFocus
+                value={email}
+                onChange={(event) => {
+                  setEmail(event.target.value);
+                }}
               />
               <TextField
                 margin="normal"
@@ -92,6 +124,10 @@ export default function SignInSide() {
                 type="password"
                 id="password"
                 autoComplete="current-password"
+                value={password}
+                onChange={(event) => {
+                  setPassword(event.target.value);
+                }}
               />
               <FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}
