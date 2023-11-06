@@ -7,10 +7,8 @@ import com.ChronoChords.ChronoChords.service.userService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
-
-@CrossOrigin("*")
 @RestController
-@RequestMapping("/api/registeration/")
+@RequestMapping("/api/registration")
 public class userController {
     @Autowired
     private userService userService;
@@ -21,7 +19,7 @@ public class userController {
         return id;
     }
     @PostMapping(path = "/login")
-    public ResponseEntity<?> loginEmployee(@RequestBody loginDTO loginDTO)
+    public ResponseEntity<?> loginUser(@RequestBody loginDTO loginDTO)
     {
         loginResponse loginResponse = userService.loginUser(loginDTO);
         return ResponseEntity.ok(loginResponse);

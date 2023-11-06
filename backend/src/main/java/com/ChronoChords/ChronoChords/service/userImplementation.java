@@ -50,10 +50,10 @@ public class userImplementation implements userService {
                     return new loginResponse("Login Failed", false);
                 }
             } else {
-                return new loginResponse("password Not Match", false);
+                return new loginResponse("password Not Match" +" " + encodedPassword + " " + password, false);
             }
         }else {
-            return new loginResponse("Email not exits", false);
+            return new loginResponse("Email not exits" , false);
         }
     }
 }
