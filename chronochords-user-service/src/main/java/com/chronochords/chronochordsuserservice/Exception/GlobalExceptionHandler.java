@@ -26,8 +26,19 @@ public class GlobalExceptionHandler {
         body.put("timestamp", LocalDateTime.now());
         body.put("status", ex.getStatus().value());
         body.put("error", ex.getStatus().getReasonPhrase());
-        body.put("message", ex.getMessage());
-        // You can add more details here if needed
+
+        // Check if the exception has a message, include it
+        if (ex.getMessage() != null && !ex.getMessage().isEmpty()) {
+            body.put("message", ex.getMessage());
+        }
+
+        // If the CustomException contains a map of errors, include it in the response
+        if (ex.getErrors() != null && !ex.getErrors().isEmpty()) {
+            body.put("errors", ex.getErrors());
+        } else {
+            // Fallback to a generic message if no detailed errors are available
+            body.put("message", "An unexpected error occurred.");
+        }
 
         return new ResponseEntity<>(body, ex.getStatus());
     }

@@ -9,25 +9,39 @@ import com.chronochords.chronochordsuserservice.Service.UserService;
 import com.chronochords.chronochordsuserservice.payload.response.LoginMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Service
 public class UserIMPL implements UserService {
     @Autowired
     private UserRepo userRepo;
     @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
     private PasswordEncoder passwordEncoder;
     @Override
     public String addUser(UserDTO userDTO) {
+
+        Map<String, String> errors = new LinkedHashMap<>();
+
         // Check if email already exists
         if (userRepo.existsByEmail(userDTO.getEmail())) {
-            throw new CustomException("Email already in use", HttpStatus.BAD_REQUEST);
+            errors.put("email", "Email is already in use");
         }
 
         // Check if the username already exists
         if (userRepo.existsByUsername(userDTO.getUsername())) {
-            throw new CustomException("Username already taken", HttpStatus.BAD_REQUEST);
+            errors.put("username", "Username is already in taken");
+        }
+
+        // If there are any errors, throw an exception with all errors.
+        if (!errors.isEmpty()) {
+            throw new CustomException(errors, HttpStatus.BAD_REQUEST);
         }
 
         // If both checks pass, proceed with registration
