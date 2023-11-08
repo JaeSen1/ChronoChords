@@ -25,41 +25,21 @@ ValueLabelComponent.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
-const marks = [
-  {
-    value: 1910,
-  },
-  {
-    value: 1920,
-  },
-  {
-    value: 1930,
-  },
-  {
-    value: 1940,
-  },
-  {
-    value: 1950,
-  },
-  {
-    value: 1960,
-  },
-  {
-    value: 1970,
-  },
-  {
-    value: 1980,
-  },
-  {
-    value: 1990,
-  },
-  {
-    value: 2000,
-  },
-  {
-    value: 2010,
+const generateMarks = () => {
+  const marks = [];
+  for (let value = 1900; value <= 2023; value += 1) {
+    const mark = { value };
+    if (value % 10 === 0) {
+      mark.label = value;
+    }
+    marks.push(mark);
   }
-];
+  return marks;
+};
+
+const marks = generateMarks();
+
+
 
 const normalButtonStyle = {
   backgroundColor: '#1B1B1B', 
@@ -117,14 +97,39 @@ const TimelineSlider = styled(Slider)(({ theme, correctGuess }) => ({
     },
     
   },
+  '& .MuiSlider-mark[data-index="0"], .MuiSlider-mark[data-index="10"], .MuiSlider-mark[data-index="20"]': {
+    top: 71,
+    height: 20
+  },
+  '& .MuiSlider-mark[data-index="30"], .MuiSlider-mark[data-index="40"], .MuiSlider-mark[data-index="50"]': {
+    top: 71,
+    height: 20
+  },
+  '& .MuiSlider-mark[data-index="60"], .MuiSlider-mark[data-index="70"], .MuiSlider-mark[data-index="80"]': {
+    top: 71,
+    height: 20
+  },
+  '& .MuiSlider-mark[data-index="90"], .MuiSlider-mark[data-index="100"], .MuiSlider-mark[data-index="110"]': {
+    top: 71,
+    height: 20
+  },
+  '& .MuiSlider-mark[data-index="120"]': {
+    top: 71,
+    height: 20
+  },
   '& .MuiSlider-mark': {
     backgroundColor: 'black',
-    height: 'inherit',
-    width: 1,
+    width: 2,
+    top: 65,
+    height: 7,
     '&.MuiSlider-markActive': {
       opacity: 1,
       backgroundColor: 'currentColor',
-    },
+    }
+  },
+  '& .MuiSlider-markLabel': {
+    top: "80px",
+    fontSize: "20px",
   },
   '& .actualYearMarkLabel': { 
     // This class is for the actual year's label specifically
