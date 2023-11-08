@@ -37,10 +37,37 @@ export default function SignInSide() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const navigate = useNavigate();
+
+  const [errors, setErrors] = useState({});
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  const validateEmail = (email) => {
+    return emailRegex.test(email);
+  };
+
+  const validate = () => {
+    let tempErrors = {};
+    // Simple validation criteria, can be replaced with more complex validators
+    if (!validateEmail(email)) tempErrors.email = "Email is not valid";
+    if (password.length < 4) tempErrors.password = "Password must be at least 4 characters long";
+
+    setErrors(tempErrors);
+
+    // Form is valid if the errors object has no properties
+    return Object.keys(tempErrors).length === 0;
+  };
 
   async function Login(event) {
     event.preventDefault();
+
+    // Call validate function and prevent submission if validation fails
+    if (!validate()) {
+      return;
+    }
+
     try {
       await axios.post("http://localhost:8085/api/v1/user/login", {
         email: email,
@@ -62,8 +89,25 @@ export default function SignInSide() {
       }, fail => {
         console.error(fail);
       });
-    } catch(err) {
-      alert(err);
+    } catch (err) {
+      if (err.response) {
+        // Backend returned an error response.
+        if (err.response.data && err.response.data.errors) {
+          setErrors(err.response.data.errors);
+        } else if (err.response.data && err.response.data.message) {
+          // For generic error messages not associated with specific fields.
+          setErrors(prevErrors => ({ ...prevErrors, form: err.response.data.message }));
+        } else {
+          // Fallback error message
+          setErrors(prevErrors => ({ ...prevErrors, form: 'An unexpected error occurred.' }));
+        }
+      } else if (err.request) {
+        // The request was made but no response was received
+        setErrors(prevErrors => ({ ...prevErrors, form: 'No response was received from the server.' }));
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        setErrors(prevErrors => ({ ...prevErrors, form: 'There was an error in the request: ' + err.message }));
+      }
     }
   }
 
@@ -112,6 +156,8 @@ export default function SignInSide() {
                 autoComplete="email"
                 autoFocus
                 value={email}
+                error={Boolean(errors.email)}
+                helperText={errors.email}
                 onChange={(event) => {
                   setEmail(event.target.value);
                 }}
@@ -126,6 +172,8 @@ export default function SignInSide() {
                 id="password"
                 autoComplete="current-password"
                 value={password}
+                error={Boolean(errors.password)}
+                helperText={errors.password}
                 onChange={(event) => {
                   setPassword(event.target.value);
                 }}

@@ -39,6 +39,7 @@ export default function SignInSide() {
 
   const [errors, setErrors] = useState({});
 
+  
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const validateEmail = (email) => {
@@ -76,17 +77,24 @@ export default function SignInSide() {
       });
       navigate('/login');
     }
-      catch (err) {
+    catch (err) {
       if (err.response) {
-        // Status code fell out of the range of 2xx.
-        const message = err.response.data.message || "An error occurred while trying to register.";
-        alert(message);
+        // Backend returned an error response.
+        if (err.response.data && err.response.data.errors) {
+          setErrors(err.response.data.errors);
+        } else if (err.response.data && err.response.data.message) {
+          // For generic error messages not associated with specific fields.
+          setErrors(prevErrors => ({ ...prevErrors, form: err.response.data.message }));
+        } else {
+          // Fallback error message
+          setErrors(prevErrors => ({ ...prevErrors, form: 'An unexpected error occurred.' }));
+        }
       } else if (err.request) {
         // The request was made but no response was received
-        alert("No response was received from the server.");
+        setErrors(prevErrors => ({ ...prevErrors, form: 'No response was received from the server.' }));
       } else {
         // Something happened in setting up the request that triggered an Error
-        alert("There was an error in the request: ", err.message);
+        setErrors(prevErrors => ({ ...prevErrors, form: 'There was an error in the request: ' + err.message }));
       }
     }
   }
