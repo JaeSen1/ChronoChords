@@ -5,6 +5,7 @@ import Registration from './pages/Register'
 import About from './pages/About'
 import NoPage from './pages/NoPage'
 import ForgotPassword from './pages/ForgotPassword'
+import LandingPage from './pages/LandingPage'
 import { AuthProvider } from './AuthContext';
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -15,7 +16,8 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Appbar />}>
-            <Route index element={<MainGame />} />
+            <Route index element={<LandingPage />} />
+            <Route path="maingame" element={<MainGame />} />
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Registration />} />
             <Route path="resetpassword" element={<ForgotPassword />} />

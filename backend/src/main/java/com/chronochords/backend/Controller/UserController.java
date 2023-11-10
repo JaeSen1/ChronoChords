@@ -1,4 +1,4 @@
-package com.chronochords.backend.UserController;
+package com.chronochords.backend.Controller;
 import com.chronochords.backend.DTO.UserDTO;
 import com.chronochords.backend.DTO.LoginDTO;
 import com.chronochords.backend.Service.UserService;
