@@ -13,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -20,8 +21,6 @@ import java.util.Map;
 public class UserIMPL implements UserService {
     @Autowired
     private UserRepo userRepo;
-    @Autowired
-    private AuthenticationManager authenticationManager;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Override
@@ -53,6 +52,22 @@ public class UserIMPL implements UserService {
         );
         userRepo.save(user);
         return user.getUsername();
+    }
+    public void createPasswordResetTokenForUser(User user, String token) {
+        user.setResetPasswordToken(token);
+        user.setTokenExpiryDate(LocalDateTime.now().plusHours(1)); // Token expires in 1 hour
+        userRepo.save(user);
+    }
+
+    public User getUserByPasswordResetToken(String token) {
+        return userRepo.findByResetPasswordToken(token);
+    }
+
+    public void changeUserPassword(User user, String newPassword) {
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setResetPasswordToken(null);
+        user.setTokenExpiryDate(null);
+        userRepo.save(user);
     }
     @Override
     public LoginMessage loginUser(LoginDTO loginDTO) {
