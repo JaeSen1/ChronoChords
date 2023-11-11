@@ -58,7 +58,19 @@ public class UserIMPL implements UserService {
         user.setTokenExpiryDate(LocalDateTime.now().plusHours(1)); // Token expires in 1 hour
         userRepo.save(user);
     }
+    public boolean isResetTokenValid(String token) {
+        if (token == null || token.isEmpty()) {
+            return false;
+        }
 
+        User user = userRepo.findByResetPasswordToken(token);
+        if (user == null) {
+            return false;
+        }
+
+        LocalDateTime tokenExpiryDate = user.getTokenExpiryDate();
+        return tokenExpiryDate != null && tokenExpiryDate.isAfter(LocalDateTime.now());
+    }
     public User getUserByPasswordResetToken(String token) {
         return userRepo.findByResetPasswordToken(token);
     }

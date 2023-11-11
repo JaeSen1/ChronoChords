@@ -25,7 +25,14 @@ public class UserController {
 
     @Autowired
     private UserRepo UserRepo;
-
+    @GetMapping("/validate-reset-token")
+    public ResponseEntity<?> validateResetToken(@RequestParam("token") String token) {
+        boolean isValid = userService.isResetTokenValid(token);
+        if (!isValid) {
+            return ResponseEntity.badRequest().body("Invalid or expired token.");
+        }
+        return ResponseEntity.ok("Token is valid.");
+    }
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestParam("token") String token,
                                            @RequestParam("newPassword") String newPassword) {

@@ -6,7 +6,9 @@ import About from './pages/About'
 import NoPage from './pages/NoPage'
 import ForgotPassword from './pages/ForgotPassword'
 import LandingPage from './pages/LandingPage'
+import ResetPassword from './pages/ResetPassword'
 import { AuthProvider } from './AuthContext';
+
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
@@ -17,6 +19,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Appbar />}>
             <Route index element={<LandingPage />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="maingame" element={<MainGame />} />
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Registration />} />
