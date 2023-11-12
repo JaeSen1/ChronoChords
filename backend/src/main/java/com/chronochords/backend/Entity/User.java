@@ -1,5 +1,9 @@
 package com.chronochords.backend.Entity;
 import jakarta.persistence.*;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name="users", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"username"}),
@@ -10,6 +14,13 @@ public class User {
     @Column(name = "user_id", length = 45)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int userid;
+
+    @Column(name = "reset_password_token")
+    private String resetPasswordToken;
+
+    @Column(name = "token_expiry_date")
+    private LocalDateTime tokenExpiryDate;
+
     @Column(name = "username", length = 255, nullable = false, unique = true)
     private String username;
     @Column(name = "email", length = 255, nullable = false, unique = true)
@@ -57,5 +68,17 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setResetPasswordToken(String token) {
+        this.resetPasswordToken = token;
+    }
+
+    public void setTokenExpiryDate(LocalDateTime localDateTime) {
+        this.tokenExpiryDate = localDateTime;
+    }
+
+    public LocalDateTime getTokenExpiryDate() {
+        return this.tokenExpiryDate;
     }
 }

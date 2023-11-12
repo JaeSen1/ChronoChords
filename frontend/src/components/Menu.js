@@ -88,7 +88,6 @@ export default function MenuListComposition() {
                   >
                     <MenuItem onClick={handleClose}><Link to="/about" ><Button color="inherit">About</Button></Link></MenuItem>
                     <MenuItem onClick={handleClose}><Link to="/login" ><Button color="inherit">Login</Button></Link></MenuItem>
-                    <MenuItem onClick={handleClose}>Logout</MenuItem>
                   </MenuList>
                 </ClickAwayListener>
               </Paper>
