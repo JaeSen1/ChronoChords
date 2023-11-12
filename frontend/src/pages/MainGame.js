@@ -55,6 +55,8 @@ export default function MainGame() {
     
     const currentSong = songs[songIndex];
 
+    const numRounds = 10;
+    
     // console.log(songs);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -65,7 +67,7 @@ export default function MainGame() {
 
     // 2. Handle advancing to the next game/round
     const handleNextGame = () => {
-        if (round < 5) {
+        if (round < 10) {
             setRound(round + 1);
             setSongIndex((songIndex + 1) % songs.length); // go to the next song, loop back to the first song if needed
             setScore(null); // reset the score
@@ -130,7 +132,7 @@ export default function MainGame() {
 
     return (
         <div className="App">
-            <RoundCount round={round} />
+            <RoundCount round={round} numRounds={numRounds}/>
             <ScoreDisplay score={score} />
             <div className="Slider-container">
                 <Slider 
@@ -138,7 +140,7 @@ export default function MainGame() {
                     onChange={handleSliderChange} 
                     onSubmit={handleGuess} 
                     onNextRound={handleNextGame}
-                    finalRound={round >= 5} // true if it's the final round, else false
+                    finalRound={round >= 10} // true if it's the final round, else false
                     locked={sliderLocked}
                     actualYear={actualYear}
                 />

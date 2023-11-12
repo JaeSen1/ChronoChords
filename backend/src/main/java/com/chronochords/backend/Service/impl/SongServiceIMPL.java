@@ -22,7 +22,7 @@ public class SongServiceIMPL {
     private SpotifyApi spotifyApi;
 
     public List<Track> getSongs() throws Exception {
-        Pageable limit = PageRequest.of(0, 5); // Fetching the first 5 songs
+        Pageable limit = PageRequest.of(0, 10); // Fetching the first 10 songs
         List<Song> songEntities = songRepo.findAll(limit).getContent(); // Getting the list of SongEntity from Page
         List<Track> songs = new ArrayList<>();
 

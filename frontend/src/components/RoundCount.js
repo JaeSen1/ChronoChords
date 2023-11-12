@@ -2,7 +2,7 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-export default function RoundCount({ round }) {
+export default function RoundCount({ round, numRounds }) {
     return (
         <>
             {/* White line separator */}
@@ -28,7 +28,7 @@ export default function RoundCount({ round }) {
                   color: '#fff', // Text color, adjust as needed
                 }}
               >
-                Round {round} of 5
+                Round {round} of {numRounds}
               </Typography>
             </Box>
         </>
