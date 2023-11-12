@@ -1,7 +1,6 @@
 package com.chronochords.backend.Entity;
 import jakarta.persistence.*;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Entity

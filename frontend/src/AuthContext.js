@@ -3,15 +3,15 @@ import React, { createContext, useContext, useState } from 'react';
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [authUser, setAuthUser] = useState(JSON.parse(localStorage.getItem('user')));
-
+  const [authUser, setAuthUser] = useState(JSON.parse(sessionStorage.getItem('user')));
+  
   const login = (user) => {
-    localStorage.setItem('user', JSON.stringify(user));
+    sessionStorage.setItem('user', JSON.stringify(user));
     setAuthUser(user);
   };
 
   const logout = () => {
-    localStorage.removeItem('user');
+    sessionStorage.removeItem('user');
     setAuthUser(null);
   };
 
