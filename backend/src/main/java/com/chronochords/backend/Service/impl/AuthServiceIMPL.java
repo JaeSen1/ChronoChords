@@ -1,6 +1,6 @@
 package com.chronochords.backend.Service.impl;
 
-import com.chronochords.backend.Service.SpotifyService;
+import com.chronochords.backend.Service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import se.michaelthelin.spotify.SpotifyApi;
@@ -14,12 +14,12 @@ import se.michaelthelin.spotify.requests.data.tracks.GetTrackRequest;
 import java.io.IOException;
 
 @Service
-public class SpotifyServiceIMPL implements SpotifyService {
+public class AuthServiceIMPL implements AuthService {
 
     private final SpotifyApi spotifyApi;
 
     @Autowired
-    public SpotifyServiceIMPL(SpotifyApi spotifyApi) {
+    public AuthServiceIMPL(SpotifyApi spotifyApi) {
         this.spotifyApi = spotifyApi;
     }
 
@@ -35,12 +35,6 @@ public class SpotifyServiceIMPL implements SpotifyService {
         } catch (IOException | SpotifyWebApiException | ParseException e) {
             System.out.println("Error: " + e.getMessage());
         }
-    }
-
-    @Override
-    public Track getTrack(String trackId) throws IOException, SpotifyWebApiException, ParseException {
-        GetTrackRequest getTrackRequest = spotifyApi.getTrack(trackId).build();
-        return getTrackRequest.execute();
     }
 }
 

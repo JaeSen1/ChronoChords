@@ -6,8 +6,7 @@ import se.michaelthelin.spotify.model_objects.specification.Track;
 
 import java.io.IOException;
 
-public interface SpotifyService {
+public interface AuthService {
     void clientCredentials_Sync();
-    Track getTrack(String trackId) throws IOException, SpotifyWebApiException, ParseException;
 }
 

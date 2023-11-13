@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 export default function LandingPage() {
 
     const getSpotifyUserLogin = () => {
-        fetch("http://localhost:8085/spotify/refresh-token")
+        fetch("http://localhost:8085/api/refresh-token")
         .then((response) => response.text())
         .then((responseText) => {
             // Handle the response here
@@ -17,8 +17,10 @@ export default function LandingPage() {
 
     const [trackId, setTrackId] = useState('');
 
+    const [playlistId, setPlaylistId] = useState('');
+
     const fetchTrackDetails = () => {
-        fetch(`http://localhost:8085/spotify/${trackId}`)
+        fetch(`http://localhost:8085/spotify/track/${trackId}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -32,7 +34,7 @@ export default function LandingPage() {
     };
 
     const fetchAllTrackDetails = () => {
-        fetch(`http://localhost:8085/spotify/loadmusic`)
+        fetch(`http://localhost:8085/spotify/loadallmusic`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -45,6 +47,20 @@ export default function LandingPage() {
             .catch(error => console.error('Error fetching track details:', error));
     };
 
+    const fetchPlaylistDetails = () => {
+        fetch(`http://localhost:8085/spotify/playlist/${playlistId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data); // Process the response data as needed
+        })
+        .catch(error => console.error('Error fetching playlist details:', error));
+    };
+
     return (
         <div>
             <input 
@@ -54,8 +70,15 @@ export default function LandingPage() {
                 placeholder="Enter Track ID" 
             />
             <button onClick={fetchTrackDetails}>Fetch Track Details</button>
-            <button onClick={fetchAllTrackDetails}>Fetch 5 tracks in database</button>
+            <button onClick={fetchAllTrackDetails}>Fetch 10 tracks in database</button>
             <div><button onClick={getSpotifyUserLogin}>Refresh Token</button></div>
+            <input 
+                type="text" 
+                value={playlistId} 
+                onChange={e => setPlaylistId(e.target.value)} 
+                placeholder="Enter Playlist ID" 
+            />
+            <div><button onClick={fetchPlaylistDetails}>Fetch Playlist Details</button></div>
         </div>
     );
 }

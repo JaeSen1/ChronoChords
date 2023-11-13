@@ -1,8 +1,8 @@
 package com.chronochords.backend.Controller;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
-import jakarta.servlet.http.HttpServlet;
+import com.chronochords.backend.Service.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.SpotifyHttpManager;
@@ -22,6 +22,7 @@ public class AuthController {
 
     // Redirect URI must match the one found on the Spotify developer dashboard settings.
     private static final URI redirectUri = SpotifyHttpManager.makeUri("http://localhost:8085/api/get-user-code");
+    private final AuthService authService;
     private String code = "";
 
     // Create environment variables for SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET
@@ -31,14 +32,16 @@ public class AuthController {
     // export SPOTIFY_CLIENT_SECRET=your_client_secret
     private static final String CLIENT_ID = System.getenv("SPOTIFY_CLIENT_ID");
     private static final String CLIENT_SECRET = System.getenv("SPOTIFY_CLIENT_SECRET");
-
-
-
     private static final SpotifyApi spotifyApi = new SpotifyApi.Builder()
             .setClientId(CLIENT_ID)
             .setClientSecret(CLIENT_SECRET)
             .setRedirectUri(redirectUri)
             .build();
+
+    @Autowired
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
 
     @GetMapping("login")
     @ResponseBody
@@ -71,6 +74,12 @@ public class AuthController {
 
         response.sendRedirect("http://localhost:3000/maingame");
         return spotifyApi.getAccessToken();
+    }
+
+    @GetMapping("/refresh-token")
+    public String refreshToken() {
+        authService.clientCredentials_Sync();
+        return "Token refreshed";
     }
 }
 

@@ -1,6 +1,7 @@
 package com.chronochords.backend.Service.impl;
 
 import com.chronochords.backend.Entity.User;
+import com.chronochords.backend.Service.EmailService;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -8,7 +9,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 
 
 @Service
-public class EmailService {
+public class EmailServiceIMPL implements EmailService {
 
     @Autowired
     private JavaMailSender mailSender;

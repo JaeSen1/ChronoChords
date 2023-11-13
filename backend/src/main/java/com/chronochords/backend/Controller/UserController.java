@@ -4,7 +4,7 @@ import com.chronochords.backend.DTO.LoginDTO;
 import com.chronochords.backend.Entity.User;
 import com.chronochords.backend.Repository.UserRepo;
 import com.chronochords.backend.Service.UserService;
-import com.chronochords.backend.Service.impl.EmailService;
+import com.chronochords.backend.Service.impl.EmailServiceIMPL;
 import com.chronochords.backend.payload.response.LoginMessage;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ public class UserController {
     private UserService userService;
 
     @Autowired
-    private EmailService emailService;
+    private EmailServiceIMPL emailServiceIMPL;
 
     @Autowired
     private UserRepo UserRepo;
@@ -54,7 +54,7 @@ public class UserController {
 
         String token = UUID.randomUUID().toString();
         userService.createPasswordResetTokenForUser(user, token);
-        emailService.sendPasswordResetEmail(user, token);
+        emailServiceIMPL.sendPasswordResetEmail(user, token);
 
         return ResponseEntity.ok("Password reset link sent.");
     }
