@@ -86,7 +86,7 @@ public class UserServiceIMPL implements UserService {
         if (user1 != null) {
             String password = loginDTO.getPassword();
             String encodedPassword = user1.getPassword();
-            Boolean isPwdRight = passwordEncoder.matches(password, encodedPassword);
+            boolean isPwdRight = passwordEncoder.matches(password, encodedPassword);
             if (isPwdRight) {
                 return new LoginMessage("Login Success", true, user1.getUsername());
             } else {

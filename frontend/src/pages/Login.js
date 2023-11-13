@@ -79,8 +79,8 @@ export default function SignInSide() {
           alert("Email does not exist");
         }
         else if (res.data.message === "Login Success") {
-          navigate('/');
           const user = { username: res.data.username };
+          navigate('/');
           login(user);
         } 
         else {
