@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import se.michaelthelin.spotify.SpotifyApi;
 
 @Configuration
-public class SpotifyConfig {
+public class SpotifyAuthConfig {
 
     @Value("${spotify.client.id}")
     private String clientId;
