@@ -12,4 +12,6 @@ public interface SongService {
     List<Track> loadMusicFromDatabase() throws Exception;
     Playlist getPlaylistById(String playlistId) throws IOException, SpotifyWebApiException, ParseException;
     Track getSingleTrackById(String trackId) throws IOException, SpotifyWebApiException, ParseException;
+    void saveSongsFromSpotifyPlaylist(String playlistId);
+
 }

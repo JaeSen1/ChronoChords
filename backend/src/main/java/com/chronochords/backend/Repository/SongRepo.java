@@ -10,4 +10,5 @@ import org.springframework.data.domain.Pageable;
 @Repository
 public interface SongRepo extends JpaRepository<Song, Long> {
     Page<Song> findAll(Pageable pageable);
+    boolean existsBySongNameAndArtistName(String songName, String artistName);
 }

@@ -59,5 +59,11 @@ public class SongController {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
+
+    @PostMapping("/saveFromSpotifyPlaylist")
+    public void saveSongsFromPlaylist(@RequestParam String playlistId) {
+        songService.saveSongsFromSpotifyPlaylist(playlistId);
+    }
+
 }
 
