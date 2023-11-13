@@ -43,7 +43,7 @@ export default function BasicModal({ open, onClose, songData }) {
 
           {/* Description section */}
           <Typography id="modal-modal-description" sx={{ mt: 2, wordWrap: 'break-word' }}>
-            {songData.description} {/* Placeholder for real description */}
+            {songData.artistDescription} {/* Placeholder for real description */}
           </Typography>
         </Box>
       </Modal>

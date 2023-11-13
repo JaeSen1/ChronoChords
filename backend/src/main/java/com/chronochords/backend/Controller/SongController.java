@@ -1,5 +1,6 @@
 package com.chronochords.backend.Controller;
 
+import com.chronochords.backend.Entity.Song;
 import com.chronochords.backend.Service.SongService;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -39,9 +40,9 @@ public class SongController {
     }
 
     @GetMapping("/loadallmusic")
-    public ResponseEntity<List<Track>> getSongs() {
+    public ResponseEntity<List<Song>> getSongs() {
         try {
-            List<Track> songs = songService.loadMusicFromDatabase();
+            List<Song> songs = songService.loadMusicFromDatabase();
             return ResponseEntity.ok(songs);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(null);

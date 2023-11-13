@@ -26,9 +26,10 @@ export default function MainGame() {
     //year: data.album.releaseDate (set to year only)
     //artist: data.artists[0].name
     //album: data.album.name
+    //artistDescription: 
 
     const fetchAllTrackDetails = () => {
-        fetch(`http://localhost:8085/spotify/loadmusic`)
+        fetch(`http://localhost:8085/spotify/loadallmusic`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -38,11 +39,12 @@ export default function MainGame() {
             .then(data => {
                 const formattedSongs = data.map(songData => ({
                     url: songData.previewUrl,
-                    title: songData.name,
-                    cover: songData.album.images[0].url,
-                    year: new Date(songData.album.releaseDate).getFullYear().toString(),
-                    artist: songData.artists[0].name,
-                    album: songData.album.name
+                    title: songData.songName,
+                    cover: songData.albumCover,
+                    year: new Date(songData.releaseYear).getFullYear().toString(),
+                    artist: songData.artistName,
+                    album: songData.albumName,
+                    //artistDescription: songData.
                 }));
                 setSongs(formattedSongs);
             })
@@ -55,7 +57,7 @@ export default function MainGame() {
     
     const currentSong = songs[songIndex];
 
-    const numRounds = 10;
+    const numRounds = songs.length;
     
     // console.log(songs);
 
@@ -67,7 +69,7 @@ export default function MainGame() {
 
     // 2. Handle advancing to the next game/round
     const handleNextGame = () => {
-        if (round < 10) {
+        if (round < numRounds) {
             setRound(round + 1);
             setSongIndex((songIndex + 1) % songs.length); // go to the next song, loop back to the first song if needed
             setScore(null); // reset the score
@@ -140,7 +142,7 @@ export default function MainGame() {
                     onChange={handleSliderChange} 
                     onSubmit={handleGuess} 
                     onNextRound={handleNextGame}
-                    finalRound={round >= 10} // true if it's the final round, else false
+                    finalRound={round >= numRounds} // true if it's the final round, else false
                     locked={sliderLocked}
                     actualYear={actualYear}
                 />

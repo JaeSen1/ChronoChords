@@ -38,16 +38,10 @@ public class SongServiceIMPL implements SongService {
     }
 
     @Override
-    public List<Track> loadMusicFromDatabase() throws Exception {
-        Pageable limit = PageRequest.of(0, 20); // Fetching the first X songs
-        List<Song> songEntities = songRepo.findAll(limit).getContent(); // Getting the list of SongEntity from Page
-        List<Track> songs = new ArrayList<>();
-
-        for (Song songEntity : songEntities) {
-            GetTrackRequest getTrackRequest = spotifyApi.getTrack(songEntity.getSongId()).build();
-            songs.add(getTrackRequest.execute());
-        }
-        return songs;
+    public List<Song> loadMusicFromDatabase() {
+        Pageable limit = PageRequest.of(0, 10000); // Fetching the first 20 songs
+        List<Song> songEntities = songRepo.findAll(limit).getContent(); // Getting the list of Song entities from the database
+        return songEntities; // Return the list of Song entities
     }
 
     @Override
@@ -77,11 +71,14 @@ public class SongServiceIMPL implements SongService {
 
                 for (PlaylistTrack playlistTrack : playlistTrackPaging.getItems()) {
                     Track track = (Track) playlistTrack.getTrack();
-                    if (track != null && track.getPreviewUrl() != null) {
-                        if (!songRepo.existsBySongNameAndArtistName(track.getName(), track.getArtists()[0].getName())) {
+                    if (track != null && track.getPreviewUrl() != null && track.getAlbum().getImages().length != 0) {
+                        if (!songRepo.existsBySongNameAndArtistName(track.getName(), track.getArtists()[0].getName()) && !songRepo.existsByPreviewUrl(track.getPreviewUrl())) {
                             Song song = new Song();
                             song.setSongName(track.getName());
+                            song.setPreviewUrl(track.getPreviewUrl());
+                            song.setAlbumCover(track.getAlbum().getImages()[0].getUrl());
                             song.setArtistName(track.getArtists()[0].getName());
+                            song.setAlbumName(track.getAlbum().getName());
                             song.setReleaseYear(yearFormat.parse(track.getAlbum().getReleaseDate().substring(0, 4)));
                             song.setSongId(track.getId());
                             songRepo.save(song);
