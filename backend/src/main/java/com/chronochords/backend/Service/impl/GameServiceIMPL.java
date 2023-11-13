@@ -3,13 +3,14 @@ package com.chronochords.backend.Service.impl;
 import com.chronochords.backend.Entity.Game;
 import com.chronochords.backend.Entity.User;
 import com.chronochords.backend.Repository.GameRepo;
+import com.chronochords.backend.Service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
 @Service
-public class GameService {
+public class GameServiceIMPL implements GameService {
     @Autowired
     private GameRepo gameSessionRepository;
 

@@ -1,14 +1,10 @@
 package com.chronochords.backend.Controller;
-import com.chronochords.backend.Entity.Game;
 import com.chronochords.backend.Entity.User;
 import com.chronochords.backend.Repository.UserRepo;
-import com.chronochords.backend.Service.impl.GameService;
+import com.chronochords.backend.Service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
 
 @RestController
 @CrossOrigin
