@@ -65,12 +65,18 @@ export default function BasicModal({ open, onClose, songData }) {
 
         {/* Tabs */}
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs value={tabValue} onChange={handleTabChange} aria-label="basic tabs example">
-            <Tab label="Artist" />
-            <Tab label="Song" />
-            <Tab label="Year" />
-          </Tabs>
-        </Box>
+        <Tabs value={tabValue} onChange={handleTabChange} aria-label="basic tabs example"
+          sx={{ 
+            '.MuiTabs-flexContainer': {
+            justifyContent: 'flex-end'
+          }
+        }}>
+        <Tab label="Artist" />
+        <Tab label="Song" />
+        <Tab label="Year" />
+        </Tabs>
+      </Box>
+
 
         {/* Tab Panels */}
         <TabPanel value={tabValue} index={0}>
