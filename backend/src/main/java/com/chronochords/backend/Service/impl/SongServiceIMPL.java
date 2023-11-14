@@ -20,8 +20,8 @@ import se.michaelthelin.spotify.requests.data.tracks.GetTrackRequest;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
 @Service
 public class SongServiceIMPL implements SongService {
 
@@ -40,14 +40,21 @@ public class SongServiceIMPL implements SongService {
     @Override
     public List<Song> loadMusicFromDatabase() {
         Pageable limit = PageRequest.of(0, 10000); // Fetching the first 20 songs
-        List<Song> songEntities = songRepo.findAll(limit).getContent(); // Getting the list of Song entities from the database
-        return songEntities; // Return the list of Song entities
+        return songRepo.findAll(limit).getContent(); // Return the list of Song entities
     }
 
     @Override
     public Playlist getPlaylistById(String playlistId) throws IOException, SpotifyWebApiException, ParseException {
         GetPlaylistRequest getPlaylistRequest = spotifyApi.getPlaylist(playlistId).build();
         return getPlaylistRequest.execute();
+    }
+
+    @Override
+    public void saveTrackById(String trackId) throws IOException, ParseException, SpotifyWebApiException, java.text.ParseException {
+        GetTrackRequest getTrackRequest = spotifyApi.getTrack(trackId).build();
+        Track track = getTrackRequest.execute();
+        SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
+        saveValidTrack(track, yearFormat);
     }
 
     @Override
@@ -71,26 +78,64 @@ public class SongServiceIMPL implements SongService {
 
                 for (PlaylistTrack playlistTrack : playlistTrackPaging.getItems()) {
                     Track track = (Track) playlistTrack.getTrack();
-                    if (track != null && track.getPreviewUrl() != null && track.getAlbum().getImages().length != 0) {
-                        if (!songRepo.existsBySongNameAndArtistName(track.getName(), track.getArtists()[0].getName()) && !songRepo.existsByPreviewUrl(track.getPreviewUrl())) {
-                            Song song = new Song();
-                            song.setSongName(track.getName());
-                            song.setPreviewUrl(track.getPreviewUrl());
-                            song.setAlbumCover(track.getAlbum().getImages()[0].getUrl());
-                            song.setArtistName(track.getArtists()[0].getName());
-                            song.setAlbumName(track.getAlbum().getName());
-                            song.setReleaseYear(yearFormat.parse(track.getAlbum().getReleaseDate().substring(0, 4)));
-                            song.setSongId(track.getId());
-                            songRepo.save(song);
-                        }
-                    }
+                    saveValidTrack(track, yearFormat);
                 }
-
                 offset += limit; // Move to the next set of tracks
             }
         } catch (IOException | SpotifyWebApiException | ParseException | java.text.ParseException e) {
             System.out.println("Error: " + e.getMessage());
         }
     }
+
+    public Map<String, Double> getSongsPercentageByDecade() {
+        List<Song> songs = songRepo.findAll();
+        Map<String, Integer> countByDecade = new HashMap<>();
+        int totalSongs = songs.size();
+
+        for (Song song : songs) {
+            if (song.getReleaseYear() != null) {
+                String decade = getDecade(song.getReleaseYear());
+                countByDecade.put(decade, countByDecade.getOrDefault(decade, 0) + 1);
+            }
+        }
+
+        Map<String, Double> percentageByDecade = new HashMap<>();
+        for (Map.Entry<String, Integer> entry : countByDecade.entrySet()) {
+            double percentage = (entry.getValue() * 100.0) / totalSongs;
+            percentageByDecade.put(entry.getKey(), percentage);
+        }
+
+        return percentageByDecade;
+    }
+
+    private String getDecade(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        int year = cal.get(Calendar.YEAR);
+        int decadeStart = (year / 10) * 10;
+        return decadeStart + "s";
+    }
+
+    private void saveValidTrack(Track track, SimpleDateFormat yearFormat) throws java.text.ParseException {
+        if (track != null && track.getPreviewUrl() != null && track.getAlbum().getImages().length != 0) {
+            if (!songRepo.existsBySongNameAndArtistName(track.getName(), track.getArtists()[0].getName()) && !songRepo.existsByPreviewUrl(track.getPreviewUrl())) {
+                Song song = new Song();
+                song.setSongName(track.getName());
+                song.setPreviewUrl(track.getPreviewUrl());
+                song.setAlbumCover(track.getAlbum().getImages()[0].getUrl());
+                song.setArtistName(track.getArtists()[0].getName());
+                song.setAlbumName(track.getAlbum().getName());
+                song.setReleaseYear(yearFormat.parse(track.getAlbum().getReleaseDate().substring(0, 4)));
+                song.setPopularityRating(track.getPopularity());
+                song.setSpotifyLink(track.getExternalUrls().getExternalUrls().get("spotify"));
+                song.setSongId(track.getId());
+                songRepo.save(song);
+            }
+        }
+    }
+
+
 }
 
+// String gptQuery = "Write a description for " + songName + " by " + artistName + " in under 200 words.";
+//

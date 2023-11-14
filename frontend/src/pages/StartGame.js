@@ -19,8 +19,8 @@ const StartGame = () => {
                 title: 'Game Mode 2',
                 description: 'Description for Game Mode 1'
             },
-            'Square 3': {
-                title: 'Game Mode 3',
+            'Coming Soon': {
+                title: 'Coming Soon',
                 description: 'Description for Game Mode 1'
             },
             'Square 4': {
@@ -38,7 +38,7 @@ const StartGame = () => {
                 case 'WIP':
                     console.log("Method for Square 2 executed");
                     break;
-                case 'Square 3':
+                case 'Coming Soon':
                     console.log("Method for Square 3 executed");
                     break;
                 case 'Square 4':
