@@ -66,7 +66,6 @@ public class UserServiceIMPL implements UserService {
         if (user == null) {
             return false;
         }
-
         LocalDateTime tokenExpiryDate = user.getTokenExpiryDate();
         return tokenExpiryDate != null && tokenExpiryDate.isAfter(LocalDateTime.now());
     }
@@ -88,7 +87,7 @@ public class UserServiceIMPL implements UserService {
             String encodedPassword = user1.getPassword();
             boolean isPwdRight = passwordEncoder.matches(password, encodedPassword);
             if (isPwdRight) {
-                return new LoginMessage("Login Success", true, user1.getUsername());
+                return new LoginMessage("Login Success", true, user1.getUsername(), user1.getUserid());
             } else {
                 return new LoginMessage("Password does not match", false);
             }

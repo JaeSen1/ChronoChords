@@ -26,6 +26,19 @@ public class GameServiceIMPL implements GameService {
         return gameToken;
     }
 
+    @Override
+    public boolean validateToken(String token) {
+        if (token == null || token.isEmpty()) {
+            return false;
+        }
+        Game game = gameSessionRepository.findByToken(token);
+        if (game == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     /**
      * Nullifies gameToken so game cannot be reentered.
      * @param gameToken

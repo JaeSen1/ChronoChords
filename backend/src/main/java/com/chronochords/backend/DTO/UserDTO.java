@@ -12,6 +12,7 @@ public class UserDTO {
     @NotBlank(message = "Password is required")
     @Size(min = 4, message = "Password must be at least 4 characters long")
     private String password;
+
     public UserDTO() {
     }
     public UserDTO(int userid, String username, String email, String password) {

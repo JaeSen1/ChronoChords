@@ -79,7 +79,8 @@ export default function SignInSide() {
           alert("Email does not exist");
         }
         else if (res.data.message === "Login Success") {
-          const user = { username: res.data.username };
+          const user = {userId: res.data.userId, username: res.data.username};
+          
           navigate('/');
           login(user);
         } 

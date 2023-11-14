@@ -2,8 +2,8 @@ package com.chronochords.backend.DTO;
 
 public class LoginDTO {
     private String email;
-    private String password;
 
+    private String password;
     public LoginDTO() {
     }
 

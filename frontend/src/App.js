@@ -7,6 +7,7 @@ import NoPage from './pages/NoPage'
 import ForgotPassword from './pages/ForgotPassword'
 import DevLandingPage from './pages/DevLandingPage'
 import ResetPassword from './pages/ResetPassword'
+import StartGame from './pages/StartGame'
 import { AuthProvider } from './AuthContext';
 
 
@@ -19,8 +20,9 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Appbar />}>
             <Route index element={<DevLandingPage />} />
+            <Route path ="/gameSelection" element={<StartGame/>}/>
             <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="maingame" element={<MainGame />} />
+            <Route path="/maingame/:token" element={<MainGame />} />
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Registration />} />
             <Route path="resetpassword" element={<ForgotPassword />} />
