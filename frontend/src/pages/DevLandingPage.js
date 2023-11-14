@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
-
+import { useNavigate } from 'react-router-dom';
 export default function DevLandingPage() {
+    const navigate = useNavigate();
+    const navigateToGameSelection = () => {
+        navigate('/gameselection');
+    };
 
     const styles = {
         container: {
@@ -167,6 +171,11 @@ export default function DevLandingPage() {
             </div>
             <div style={styles.inputRow}>
                 <button style={styles.button} onClick={fetchAllTrackDetailsWithLimit}>Display Songs from Database With Limit</button>
+            </div>   
+            <div>
+            <button style={styles.button} onClick={navigateToGameSelection}>
+                Go to Game Selection(Make Sure your logged in)
+            </button>
             </div>
             <button style={styles.button} onClick={getSpotifyUserLogin}>Refresh Token</button>
         </div>

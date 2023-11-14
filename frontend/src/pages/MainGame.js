@@ -5,9 +5,13 @@ import RoundCount from '../components/RoundCount';
 import MusicPlayer from '../components/MusicPlayer';
 import Popup from '../components/Popup';
 import ScoreDisplay from '../components/ScoreDisplay';
-
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export default function MainGame() {
+    let { token } = useParams(); // token parameter passed from url.
+    
     const [round, setRound] = useState(1);
     const [score, setScore] = useState(null); // this will be reset every round
 
@@ -20,7 +24,7 @@ export default function MainGame() {
 
     const [sliderLocked, setSliderLocked] = useState(false);
     const [actualYear, setActualYear] = useState(null);
-    
+    const navigate = useNavigate();
     //url: data.previewUrl
     //cover: data.images[0]
     //year: data.album.releaseDate (set to year only)
@@ -52,12 +56,39 @@ export default function MainGame() {
     };
 
     useEffect(() => {
-        fetchAllTrackDetails();
-    }, []); // Empty dependency array means this runs once on mount
+        // Define the function to validate the token
+        const validateToken = async () => {
+            try {
+                await axios.get(`http://localhost:8085/api/game/validate-token/${token}`);
+                // If the token is valid, we can proceed to fetch track details or other actions
+                fetchAllTrackDetails();
+            } catch (error) {
+                // If the token is invalid, redirect to the login page or another appropriate page
+                navigate('/gameselection');
+            }
+        };
+        validateToken();
+    }, [token, navigate]);
     
+    
+    const endGame = () => {
+        try {
+            // Construct the params to be sent with the POST request
+            const params = new URLSearchParams();
+            params.append('token', token);
+
+            // Call the backend to end the game
+            axios.post("http://localhost:8085/api/game/end", params);
+
+            // Here you can navigate to a different route or display a game over message
+            navigate('/gameselection'); // Redirect to the game selection page
+        } catch (error) {
+            console.error('Error ending the game:', error);
+        }
+    };
     const currentSong = songs[songIndex];
 
-    const numRounds = songs.length;
+    const numRounds = 10;
     
     // console.log(songs);
 
@@ -69,7 +100,13 @@ export default function MainGame() {
 
     // 2. Handle advancing to the next game/round
     const handleNextGame = () => {
-        if (round < numRounds) {
+        console.log(round);
+        if (round >= numRounds-1) { //Check for +1 since it starts at 0
+            // If this was the last round, end the game
+            console.log("Round Ended");
+            endGame();
+        } else {
+            // Not the last round yet, advance to the next one
             setRound(round + 1);
             setSongIndex((songIndex + 1) % songs.length); // go to the next song, loop back to the first song if needed
             setScore(null); // reset the score
