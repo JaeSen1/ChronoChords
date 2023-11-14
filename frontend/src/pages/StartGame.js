@@ -4,6 +4,8 @@ import Grid from '@mui/material/Grid';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
+import { Box, Typography } from '@mui/material';
+
 const StartGame = () => {
     const { authUser, logout } = useAuth();
     const navigate = useNavigate();
@@ -13,19 +15,23 @@ const StartGame = () => {
         const gameModes = {
             'Classic': {
                 title: 'Classic',
-                description: 'Guess the year of the song after listening to a 30 second snippet.'
+                description: 'Guess the year of the song after listening to a 30 second snippet.',
+                imageUrl: "/classic2.webp" // Provide a default image URL
             },
             'WIP': {
-                title: 'Game Mode 2',
-                description: 'Description for Game Mode 1'
+                title: 'Multiplayer',
+                description: 'Guess the year of the song after listening to a 30 second snippet.',
+                imageUrl: "/classic.webp" // Provide a default image URL
             },
             'Square 3': {
-                title: 'Game Mode 3',
-                description: 'Description for Game Mode 1'
+                title: 'Daily',
+                description: 'Guess the year of the song after listening to a 30 second snippet.',
+                imageUrl: "/classic3.webp" // Provide a default image URL
             },
             'Square 4': {
-                title: 'Game Mode 4',
-                description: 'Description for Game Mode 1'
+                title: 'SongGuess',
+                description: 'Guess the year of the song after listening to a 30 second snippet.',
+                imageUrl: "/classic4.webp" // Provide a default image URL
             }
         }
         
@@ -52,7 +58,6 @@ const StartGame = () => {
 
         const startGame = async (userId, gameModeKey) => {
             const url = `http://localhost:8085/api/game/start/${userId}`;
-
             try {
                 const response = await axios.post(url);
                 const token = response.data; // The token received from the backend
@@ -71,9 +76,16 @@ const StartGame = () => {
         
     // Do not edit anything down here unless you know whats going on :) -Vedi
         return (
+            <Box sx={{
+                height: '100vh',
+                backgroundImage: 'linear-gradient(to bottom, white 2%, #EF9F9F 100%)', // Pink ombre background
+                color: 'white',
+                textAlign: 'center',
+                p: 1
+            }}>
             <Grid 
             spacing={3}
-            style={{ height: '100vh' }} 
+            style={{ height: '90vh' }} 
             alignItems="center" 
             justifyContent="center"
             container component="main" 
@@ -85,10 +97,12 @@ const StartGame = () => {
                             text={gameModes[key].title}
                             onClick={() => handleClick(key)}
                             gameInfo={gameModes[key]}
+                            imageUrl={gameModes[key].imageUrl}
                         />
                     </Grid>
                 ))}
             </Grid>
+            </Box>
         );
     };
 

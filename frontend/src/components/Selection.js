@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Paper, ButtonBase, Button, Typography, IconButton, Modal, Box } from '@mui/material';
+import { Paper, ButtonBase, Typography, IconButton, Modal, Box } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 
-const Selection = ({ text, onClick, gameInfo }) => {
+const Selection = ({ text, onClick, gameInfo, imageUrl }) => {
     const [open, setOpen] = useState(false);
 
     const handleOpen = () => setOpen(true);
@@ -12,18 +12,29 @@ const Selection = ({ text, onClick, gameInfo }) => {
         <>
             <ButtonBase
                 onClick={onClick}
-                style={{
-                    width: 200,
-                    height: 200,
+                sx={{
+                    width: 300,
+                    height: 375,
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    border: '2px solid black', // Black border
+                    overflow: 'hidden', // Prevents content from spilling out on scale
+                    borderRadius: '20px', // Rounded corners
+                    backgroundColor: 'rgba(255, 255, 255, 0.4)', // Semi-transparent white
+                    boxShadow: 3,
+                    '&:hover': {
+                        transform: 'scale(1.15)', // Slightly enlarges the selection on hover
+                        transition: 'transform 0.3s',
+                        backgroundColor: 'rgba(255, 255, 255, 0.5)', // Darkens on hover
+                        boxShadow: 140
+                    },
+                    position: 'relative',
+                    border: '1px solid black'
                 }}
             >
                 <Paper
-                    elevation={5}
+                    elevation={6}
                     style={{
                         width: '100%',
                         height: '100%',
@@ -31,12 +42,16 @@ const Selection = ({ text, onClick, gameInfo }) => {
                         alignItems: 'center',
                         justifyContent: 'center',
                         backgroundColor: '#EF9F9F',
+                        backgroundImage: `url(${imageUrl})`, // Set the background image
+                        backgroundSize: 'cover', // Cover the entire area of the component
+                        backgroundPosition: 'center', // Center the image
+                        backgroundRepeat: 'no-repeat'
                     }}
                 >
-                    <Typography>
-                        {text}
-                    </Typography>
-                    <IconButton onClick={(e) => {
+                <Typography variant="h5" component="div" sx={{ color: 'white', zIndex: 2, marginTop: 0, fontWeight: 'bold' }}>
+                            {text}
+                </Typography>
+                    <IconButton sx={{marginTop: 0}} onClick={(e) => {
                     e.stopPropagation(); // Prevents triggering the square's main onClick
                     handleOpen();
                     }}>
@@ -58,7 +73,7 @@ const Selection = ({ text, onClick, gameInfo }) => {
                     <Typography id="game-info-description" sx={{ mt: 2 }}>
                         {gameInfo.description}
                     </Typography>
-                    <Button onClick={handleClose}>Close</Button>
+                    <ButtonBase onClick={handleClose}>Close</ButtonBase>
                 </Box>
             </Modal>
         </>
