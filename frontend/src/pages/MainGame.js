@@ -88,7 +88,7 @@ export default function MainGame() {
     };
     const currentSong = songs[songIndex];
 
-    const numRounds = 10;
+    const numRounds = songs.length;
     
     // console.log(songs);
 

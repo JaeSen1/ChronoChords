@@ -26,6 +26,10 @@ public class User {
     private String email;
     @Column(name = "password", length = 255, nullable = false)
     private String password;
+    @Column(name = "description", length = 255)
+    private String description;
+    @Column(name = "status", length = 30)
+    private String status;
 
     public User() {
     }
@@ -79,5 +83,25 @@ public class User {
 
     public LocalDateTime getTokenExpiryDate() {
         return this.tokenExpiryDate;
+    }
+
+    public String getResetPasswordToken() {
+        return resetPasswordToken;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

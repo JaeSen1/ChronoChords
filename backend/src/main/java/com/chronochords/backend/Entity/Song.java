@@ -12,7 +12,6 @@ public class Song {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(name = "song_name", nullable = false)
     private String songName;
     @Column(name = "artist_name")
@@ -27,8 +26,16 @@ public class Song {
     private String previewUrl;
     @Column(name = "album_cover")
     private String albumCover;
+    @Column(name = "spotify_link", nullable = false, unique = true)
+    private String spotifyLink;
     @Column(name = "song_description")
     private String songDescription;
+    @Column(name = "artist_description")
+    private String artistDescription;
+    @Column(name = "album_description")
+    private String albumDescription;
+    @Column(name = "popularity_rating")
+    private int popularityRating;
 
     public String getSongName() {
         return songName;
@@ -100,5 +107,37 @@ public class Song {
 
     public void setAlbumName(String albumName) {
         this.albumName = albumName;
+    }
+
+    public String getArtistDescription() {
+        return artistDescription;
+    }
+
+    public void setArtistDescription(String artistDescription) {
+        this.artistDescription = artistDescription;
+    }
+
+    public String getAlbumDescription() {
+        return albumDescription;
+    }
+
+    public void setAlbumDescription(String albumDescription) {
+        this.albumDescription = albumDescription;
+    }
+
+    public int getPopularityRating() {
+        return popularityRating;
+    }
+
+    public void setPopularityRating(int popularityRating) {
+        this.popularityRating = popularityRating;
+    }
+
+    public String getSpotifyLink() {
+        return spotifyLink;
+    }
+
+    public void setSpotifyLink(String spotifyLink) {
+        this.spotifyLink = spotifyLink;
     }
 }

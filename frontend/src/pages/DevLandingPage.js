@@ -5,6 +5,9 @@ export default function DevLandingPage() {
     const navigateToGameSelection = () => {
         navigate('/gameselection');
     };
+    const navigateToDecadePieChart = () => {
+        navigate('/decadepiechart');
+    };
 
     const styles = {
         container: {
@@ -13,6 +16,7 @@ export default function DevLandingPage() {
             alignItems: 'center',
             justifyContent: 'center',
             height: '50vh',
+            marginTop: '5%'
         },
         header: {
             fontSize: '24px',
@@ -110,6 +114,23 @@ export default function DevLandingPage() {
         .catch(error => console.error('Error fetching playlist details:', error));
     };
 
+    const saveValidTrackById = () => {
+        fetch(`http://localhost:8085/spotify/saveTrackById?trackId=${encodeURIComponent(trackId)}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Response:', data); // Process the response data as needed
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
     const saveValidSongsFromPlaylist = () => {
         fetch(`http://localhost:8085/spotify/saveFromSpotifyPlaylist?playlistId=${encodeURIComponent(playlistId)}`, {
             method: 'POST',
@@ -170,14 +191,29 @@ export default function DevLandingPage() {
                 <button style={styles.button} onClick={saveValidSongsFromPlaylist}>Save Songs from Playlist</button>
             </div>
             <div style={styles.inputRow}>
+                <input
+                    type="text"
+                    style={styles.input}
+                    value={trackId}
+                    onChange={e => setTrackId(e.target.value)}
+                    placeholder="Enter Single Track ID for Saving"
+                />
+                <button style={styles.button} onClick={saveValidTrackById}>Save Single Track by ID</button>
+            </div>
+            <div style={styles.inputRow}>
                 <button style={styles.button} onClick={fetchAllTrackDetailsWithLimit}>Display Songs from Database With Limit</button>
             </div>   
             <div>
+            <div style={styles.inputRow}>
+                <button style={styles.button} onClick={navigateToDecadePieChart}>View Decade Distribution of Database</button>
+            </div>
             <button style={styles.button} onClick={navigateToGameSelection}>
-                Go to Game Selection(Make Sure your logged in)
+                Go to Game Selection (Must Be Logged In)
             </button>
             </div>
+            <div style={styles.inputRow}>
             <button style={styles.button} onClick={getSpotifyUserLogin}>Refresh Token</button>
+            </div>
         </div>
     );
 }

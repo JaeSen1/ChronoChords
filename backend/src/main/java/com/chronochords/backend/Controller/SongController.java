@@ -2,15 +2,19 @@ package com.chronochords.backend.Controller;
 
 import com.chronochords.backend.Entity.Song;
 import com.chronochords.backend.Service.SongService;
+import org.apache.hc.core5.http.ParseException;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import se.michaelthelin.spotify.model_objects.specification.Playlist;
 import se.michaelthelin.spotify.model_objects.specification.Track;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin
@@ -64,6 +68,16 @@ public class SongController {
     @PostMapping("/saveFromSpotifyPlaylist")
     public void saveSongsFromPlaylist(@RequestParam String playlistId) {
         songService.saveSongsFromSpotifyPlaylist(playlistId);
+    }
+
+    @PostMapping("/saveTrackById")
+    public void saveTrackById(@RequestParam String trackId) throws IOException, ParseException, java.text.ParseException, SpotifyWebApiException {
+        songService.saveTrackById(trackId);
+    }
+
+    @GetMapping("/percentageByDecade")
+    public Map<String, Double> getSongsPercentageByDecade() {
+        return songService.getSongsPercentageByDecade();
     }
 
 }
