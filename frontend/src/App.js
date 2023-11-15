@@ -12,7 +12,7 @@ import { AuthProvider } from './AuthContext';
 
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import DecadePieChart from './pages/DecadePieChart'
+import DecadeChart from './pages/DecadeChart'
 
 export default function App() {
   return (
@@ -21,7 +21,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Appbar />}>
             <Route index element={<DevLandingPage />} />
-            <Route path="/decadepiechart" element={<DecadePieChart/>}/>
+            <Route path="/decadechart" element={<DecadeChart/>}/>
             <Route path ="/gameSelection" element={<StartGame/>}/>
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/maingame/:token" element={<MainGame />} />

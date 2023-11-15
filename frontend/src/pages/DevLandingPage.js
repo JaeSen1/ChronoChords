@@ -5,8 +5,8 @@ export default function DevLandingPage() {
     const navigateToGameSelection = () => {
         navigate('/gameselection');
     };
-    const navigateToDecadePieChart = () => {
-        navigate('/decadepiechart');
+    const navigateToDecadeChart = () => {
+        navigate('/decadechart');
     };
 
     const styles = {
@@ -69,6 +69,8 @@ export default function DevLandingPage() {
 
     const [playlistId, setPlaylistId] = useState('');
 
+    const [numSaved, setNumSaved] = useState(null);
+
     const fetchTrackDetails = () => {
         fetch(`http://localhost:8085/spotify/track/${trackId}`)
             .then(response => {
@@ -108,8 +110,8 @@ export default function DevLandingPage() {
         })
         .then(data => {
             console.log(data); // Process the response data as needed
-            setPlaylistName(data.name); // Assuming data.name contains the playlist name
-            setNumberOfSongs(data.tracks.total); // Assuming data.tracks.total contains the tracks
+            setPlaylistName(data.name); // contains the playlist name
+            setNumberOfSongs(data.tracks.total); // contains the total num of tracks in the playlist
         })
         .catch(error => console.error('Error fetching playlist details:', error));
     };
@@ -135,7 +137,6 @@ export default function DevLandingPage() {
         fetch(`http://localhost:8085/spotify/saveFromSpotifyPlaylist?playlistId=${encodeURIComponent(playlistId)}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }
-            // Note: No body is needed since playlistId is sent as a query parameter
         })
         .then(response => {
             if (!response.ok) {
@@ -144,14 +145,17 @@ export default function DevLandingPage() {
             return response.json();
         })
         .then(data => {
-            console.log('Response:', data); // Process the response data as needed
+            console.log('Number of songs saved: ', data);
+            setNumSaved(data);
         })
         .catch(error => console.error('Error:', error));
     };
 
     return (
         <div style={styles.container}>
+
             <div style={styles.header}>Spotify API Calls</div>
+
             <div style={styles.inputRow}>
                 <div style={styles.inputButtonContainer}>
                     <input
@@ -180,15 +184,19 @@ export default function DevLandingPage() {
             </div>
 
             <div style={styles.header}>Database API Calls</div>
+
             <div style={styles.inputRow}>
-                <input
-                    type="text"
-                    style={styles.input}
-                    value={playlistId}
-                    onChange={e => setPlaylistId(e.target.value)}
-                    placeholder="Enter Playlist ID for Saving"
-                />
-                <button style={styles.button} onClick={saveValidSongsFromPlaylist}>Save Songs from Playlist</button>
+                <div style={styles.inputButtonContainer}>
+                    <input
+                        type="text"
+                        style={styles.input}
+                        value={playlistId}
+                        onChange={e => setPlaylistId(e.target.value)}
+                        placeholder="Enter Playlist ID for Saving"
+                    />
+                    <button style={styles.button} onClick={saveValidSongsFromPlaylist}>Save Songs from Playlist</button>
+                    {numSaved != null && <span style={styles.redText}>{numSaved} Songs Saved to Database</span>}
+                </div>
             </div>
             <div style={styles.inputRow}>
                 <input
@@ -205,7 +213,7 @@ export default function DevLandingPage() {
             </div>   
             <div>
             <div style={styles.inputRow}>
-                <button style={styles.button} onClick={navigateToDecadePieChart}>View Decade Distribution of Database</button>
+                <button style={styles.button} onClick={navigateToDecadeChart}>View Decade Distribution of Database</button>
             </div>
             <button style={styles.button} onClick={navigateToGameSelection}>
                 Go to Game Selection (Must Be Logged In)

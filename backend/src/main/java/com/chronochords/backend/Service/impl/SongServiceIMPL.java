@@ -58,7 +58,8 @@ public class SongServiceIMPL implements SongService {
     }
 
     @Override
-    public void saveSongsFromSpotifyPlaylist(String playlistId) {
+    public int saveSongsFromSpotifyPlaylist(String playlistId) {
+        int numSaved = 0;
         try {
             int offset = 0;
             int limit = 100; // The maximum limit is usually defined by the API
@@ -78,19 +79,29 @@ public class SongServiceIMPL implements SongService {
 
                 for (PlaylistTrack playlistTrack : playlistTrackPaging.getItems()) {
                     Track track = (Track) playlistTrack.getTrack();
-                    saveValidTrack(track, yearFormat);
+                    if (saveValidTrack(track, yearFormat)) {
+                        numSaved++;
+                    }
                 }
                 offset += limit; // Move to the next set of tracks
             }
         } catch (IOException | SpotifyWebApiException | ParseException | java.text.ParseException e) {
             System.out.println("Error: " + e.getMessage());
         }
+        return numSaved;
     }
 
-    public Map<String, Double> getSongsPercentageByDecade() {
+    public Map<String, Object> getSongsPercentageByDecade() {
         List<Song> songs = songRepo.findAll();
         Map<String, Integer> countByDecade = new HashMap<>();
         int totalSongs = songs.size();
+
+        // Initialize the map with all decades from 1900 to 2020s, set to 0
+        Map<String, Double> percentageByDecade = new HashMap<>();
+        for (int year = 1900; year <= 2020; year += 10) {
+            percentageByDecade.put(year + "s", 0.0);
+            countByDecade.put(year + "s", 0);
+        }
 
         for (Song song : songs) {
             if (song.getReleaseYear() != null) {
@@ -99,14 +110,20 @@ public class SongServiceIMPL implements SongService {
             }
         }
 
-        Map<String, Double> percentageByDecade = new HashMap<>();
         for (Map.Entry<String, Integer> entry : countByDecade.entrySet()) {
             double percentage = (entry.getValue() * 100.0) / totalSongs;
             percentageByDecade.put(entry.getKey(), percentage);
         }
 
-        return percentageByDecade;
+        // Create a map to hold both counts and percentages
+        Map<String, Object> result = new HashMap<>();
+        result.put("totalSongs", totalSongs);
+        result.put("countByDecade", countByDecade);
+        result.put("percentageByDecade", percentageByDecade);
+
+        return result;
     }
+
 
     private String getDecade(Date date) {
         Calendar cal = Calendar.getInstance();
@@ -116,7 +133,7 @@ public class SongServiceIMPL implements SongService {
         return decadeStart + "s";
     }
 
-    private void saveValidTrack(Track track, SimpleDateFormat yearFormat) throws java.text.ParseException {
+    private boolean saveValidTrack(Track track, SimpleDateFormat yearFormat) throws java.text.ParseException {
         if (track != null && track.getPreviewUrl() != null && track.getAlbum().getImages().length != 0) {
             if (!songRepo.existsBySongNameAndArtistName(track.getName(), track.getArtists()[0].getName()) && !songRepo.existsByPreviewUrl(track.getPreviewUrl())) {
                 Song song = new Song();
@@ -130,8 +147,10 @@ public class SongServiceIMPL implements SongService {
                 song.setSpotifyLink(track.getExternalUrls().getExternalUrls().get("spotify"));
                 song.setSongId(track.getId());
                 songRepo.save(song);
+                return true;
             }
         }
+        return false;
     }
 
 

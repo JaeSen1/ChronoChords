@@ -73,7 +73,6 @@ export default function SignInSide() {
         email: email,
         password: password,
       }).then((res) => {
-        console.log(res.data);
 
         if (res.data.message === "Email does not exist") {
           alert("Email does not exist");

@@ -66,8 +66,9 @@ public class SongController {
     }
 
     @PostMapping("/saveFromSpotifyPlaylist")
-    public void saveSongsFromPlaylist(@RequestParam String playlistId) {
-        songService.saveSongsFromSpotifyPlaylist(playlistId);
+    public int saveSongsFromPlaylist(@RequestParam String playlistId) {
+        int numSaved = songService.saveSongsFromSpotifyPlaylist(playlistId);
+        return numSaved;
     }
 
     @PostMapping("/saveTrackById")
@@ -76,7 +77,7 @@ public class SongController {
     }
 
     @GetMapping("/percentageByDecade")
-    public Map<String, Double> getSongsPercentageByDecade() {
+    public Map<String, Object> getSongsPercentageByDecade() {
         return songService.getSongsPercentageByDecade();
     }
 
