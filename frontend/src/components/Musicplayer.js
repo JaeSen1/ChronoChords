@@ -90,7 +90,7 @@ export default function MusicPlayerSlider({ url, songDetails, reveal, onMoreInfo
   const theme = useTheme();
   const [duration, setDuration] = useState(0); // total duration of the audio
   const [position, setPosition] = useState(0); // current position of the audio
-  const [volume, setVolume] = React.useState(0.3); // Volume is between 0 and 1
+  const [volume, setVolume] = React.useState(0.1); // Volume is between 0 and 1
 
   // You can use the 'reveal' prop to decide whether to show song details or placeholders.
   const displayCover = songDetails.cover;

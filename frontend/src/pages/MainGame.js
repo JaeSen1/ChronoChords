@@ -103,7 +103,7 @@ export default function MainGame() {
         console.log(round);
         if (round >= numRounds-1) { //Check for +1 since it starts at 0
             // If this was the last round, end the game
-            console.log("Round Ended");
+            console.log("Game Ended");
             endGame();
         } else {
             // Not the last round yet, advance to the next one
@@ -122,7 +122,7 @@ export default function MainGame() {
     };
 
     const handleGuess = () => {
-        const actualYear = currentSong.year;
+        const actualYear = Number(currentSong.year);
         const difference = Math.abs(actualYear - userGuess); // Calculate the difference in years.
     
         // Constants for calculation
