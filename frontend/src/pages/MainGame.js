@@ -23,7 +23,6 @@ const getInitialState = (token) => {
             reveal: false,
             sliderLocked: false,
             actualYear: null,
-            isSubmitted: false
         };
     }
 };
@@ -41,7 +40,6 @@ export default function MainGame() {
     const [userGuess, setUserGuess] = useState(1960); // initial value
     const [sliderLocked, setSliderLocked] = useState(initialState.sliderLocked);
     const [actualYear, setActualYear] = useState(initialState.actualYear);
-    const [isSubmitted, setIsSubmitted] = useState(initialState.isSubmitted);
     const navigate = useNavigate();
     //url: data.previewUrl
     //cover: data.images[0]
@@ -82,10 +80,9 @@ export default function MainGame() {
             reveal,
             sliderLocked,
             actualYear,
-            isSubmitted
         };
         sessionStorage.setItem(`gameState-${token}`, JSON.stringify(gameState));
-    }, [round, score, songs, songIndex, reveal, sliderLocked, actualYear, isSubmitted, token]);
+    }, [round, score, songs, songIndex, reveal, sliderLocked, actualYear, token]);
     
     useEffect(() => {
         saveGameState();

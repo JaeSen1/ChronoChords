@@ -10,7 +10,6 @@ function ProfilePage() {
       username: '',
       status: '',
       description: '',
-      img: '' // This will hold the image URL
     };
     
     // useState should be initialized with initialState if you want to reset to these values
@@ -24,12 +23,11 @@ function ProfilePage() {
         .then(response => response.json())
         .then(data => {
           setProfile({
-            ...data,
-            img: data.img || initialState.img
+            ...data
           });
         })
         .catch(error => console.error('Error:', error));
-    }, []);
+    }, [userId]);
   
     const handleInputChange = (e) => {
       const { name, value } = e.target;

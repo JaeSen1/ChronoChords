@@ -152,9 +152,4 @@ public class SongServiceIMPL implements SongService {
         }
         return false;
     }
-
-
 }
-
-// String gptQuery = "Write a description for " + songName + " by " + artistName + " in under 200 words.";
-//

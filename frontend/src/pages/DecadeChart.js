@@ -73,7 +73,6 @@ const DecadeChart = () => {
                 });
 
                 setRawData(combinedData);
-                console.log(rawData);
                 })
 
             .catch(error => console.error('Error:', error));

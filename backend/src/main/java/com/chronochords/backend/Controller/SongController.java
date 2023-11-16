@@ -85,6 +85,5 @@ public class SongController {
     public ResponseEntity<?> addToPlaylist(@RequestParam String songId) {
         return null;
     }
-
 }
 

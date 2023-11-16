@@ -21,11 +21,11 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Appbar />}>
-            <Route index element={<DevLandingPage />} />
-            <Route path="/decadechart" element={<DecadeChart/>}/>
-            <Route path ="/gameSelection" element={<StartGame/>}/>
+            <Route index element={<StartGame />} />
+            <Route path="/decadechart" element={<DecadeChart />}/>
+            <Route path ="/devpage" element={<DevLandingPage />}/>
             <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/maingame/:gamemode/:token" element={<MainGame />} />
+            <Route path="/:gamemode/:token" element={<MainGame />} />
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Registration />} />
             <Route path="resetpassword" element={<ForgotPassword />} />
