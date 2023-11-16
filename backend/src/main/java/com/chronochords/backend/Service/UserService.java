@@ -1,5 +1,5 @@
 package com.chronochords.backend.Service;
-
+import java.util.List;
 import com.chronochords.backend.DTO.UserDTO;
 import com.chronochords.backend.DTO.LoginDTO;
 import com.chronochords.backend.Entity.User;
@@ -15,4 +15,7 @@ public interface UserService {
     User getUserByPasswordResetToken(String token);
 
     boolean isResetTokenValid(String token);
+    static List<User> getAllUsers() {
+        return null;
+    }
 }

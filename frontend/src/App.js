@@ -8,6 +8,7 @@ import ForgotPassword from './pages/ForgotPassword'
 import DevLandingPage from './pages/DevLandingPage'
 import ResetPassword from './pages/ResetPassword'
 import StartGame from './pages/StartGame'
+import Profile from './pages/Profile'
 import { AuthProvider } from './AuthContext';
 
 
@@ -30,6 +31,7 @@ export default function App() {
             <Route path="resetpassword" element={<ForgotPassword />} />
             <Route path="about" element={<About />} />
             <Route path="*" element={<NoPage />} />
+            <Route path="/profile" element={<Profile/>} />
           </Route>
         </Routes>
       </BrowserRouter>

@@ -12,11 +12,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.List;
 
 @RestController
 @CrossOrigin
 @RequestMapping("api/v1/user")
-public class UserController {
+public class  UserController {
     @Autowired
     private UserService userService;
 
@@ -71,5 +72,10 @@ public class UserController {
     {
         LoginMessage loginMessage = userService.loginUser(loginDTO);
         return ResponseEntity.ok(loginMessage);
+    }
+
+    @GetMapping(path = "/getAll")
+    public List<User> getAllUsers(){
+        return UserService.getAllUsers();
     }
 }
