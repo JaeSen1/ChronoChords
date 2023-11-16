@@ -85,7 +85,7 @@ const TinyText = styled(Typography)({
   letterSpacing: 0.2,
 });
 
-export default function MusicPlayerSlider({ url, songDetails, reveal, onMoreInfo }) {
+export default function MusicPlayerSlider({ url, songDetails, reveal, onMoreInfo, onAddToPlaylist }) {
   const playerRef = useRef(null);
   const theme = useTheme();
   const [duration, setDuration] = useState(0); // total duration of the audio
@@ -220,6 +220,11 @@ export default function MusicPlayerSlider({ url, songDetails, reveal, onMoreInfo
               {reveal && (
                 <Button variant="contained" style={{ backgroundColor: '#1B1B1B', color: '#FFFFFF', mt: 1 }} onClick={onMoreInfo}>
                   More Info
+                </Button>
+              )}
+              {reveal && (
+                <Button variant="contained" style={{ backgroundColor: '#1db954', color: '#FFFFFF', mt: 1, marginLeft: 10 }} onClick={onAddToPlaylist}>
+                  Add to Playlist
                 </Button>
               )}
             </Box>

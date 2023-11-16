@@ -81,5 +81,10 @@ public class SongController {
         return songService.getSongsPercentageByDecade();
     }
 
+    @PostMapping("/add-to-playlist")
+    public ResponseEntity<?> addToPlaylist(@RequestParam String songId) {
+        return null;
+    }
+
 }
 

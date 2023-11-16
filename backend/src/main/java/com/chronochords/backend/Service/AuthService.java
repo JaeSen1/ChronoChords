@@ -1,12 +1,11 @@
 package com.chronochords.backend.Service;
 
-import org.apache.hc.core5.http.ParseException;
-import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
-import se.michaelthelin.spotify.model_objects.specification.Track;
-
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public interface AuthService {
-    void clientCredentials_Sync();
+    String createSpotifyAuthorizationURI();
+    void handleSpotifyUserCode(String userCode, String error, HttpServletResponse response) throws IOException;
+    String refreshToken();
 }
 
