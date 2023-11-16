@@ -13,6 +13,16 @@ public class Game {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    private int round;
+    private int score;
     private String token;
     public Game() {
 

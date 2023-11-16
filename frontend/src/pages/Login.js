@@ -1,6 +1,6 @@
 import * as React from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -14,7 +14,7 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from '../AuthContext';
 
 
@@ -32,9 +32,7 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function SignInSide() {
-
   const { login } = useAuth();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -47,8 +45,16 @@ export default function SignInSide() {
   const validateEmail = (email) => {
     return emailRegex.test(email);
   };
+  const location = useLocation();
+  const [loginMessage, setLoginMessage] = useState("");
 
-  const validate = () => {
+  useEffect(() => {
+    if (location.state?.from === 'StartGame' && location.state?.message) {
+        setLoginMessage(location.state.message);
+    }
+  }, [location]);
+  
+const validate = () => {
     let tempErrors = {};
     // Simple validation criteria, can be replaced with more complex validators
     if (!validateEmail(email)) tempErrors.email = "Email is not valid";
@@ -145,6 +151,11 @@ export default function SignInSide() {
             <Typography component="h1" variant="h5">
               Sign in
             </Typography>
+            {loginMessage && (
+              <Typography color="error" sx={{ mt: 2 }}>
+                {loginMessage}
+              </Typography>
+            )}
             <Box component="form" noValidate onSubmit={Login} sx={{ mt: 1 }}>
               <TextField
                 margin="normal"
