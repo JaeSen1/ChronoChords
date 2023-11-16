@@ -46,40 +46,19 @@ public class AuthController {
     @GetMapping("login")
     @ResponseBody
     public String spotifyLogin() {
-        AuthorizationCodeUriRequest authorizationCodeUriRequest = spotifyApi.authorizationCodeUri()
-                .scope("streaming")
-                .show_dialog(true)
-                .build();
-        final URI uri = authorizationCodeUriRequest.execute();
-        return uri.toString();
+        return authService.createSpotifyAuthorizationURI();
     }
 
     @GetMapping(value = "get-user-code")
-    public String getSpotifyUserCode(@RequestParam("code") String userCode, HttpServletResponse response) throws IOException {
-        code = userCode;
-        AuthorizationCodeRequest authorizationCodeRequest = spotifyApi.authorizationCode(code)
-                .build();
-
-        try {
-            final AuthorizationCodeCredentials authorizationCodeCredentials = authorizationCodeRequest.execute();
-
-            // Set access and refresh token for further "spotifyApi" object usage
-            spotifyApi.setAccessToken(authorizationCodeCredentials.getAccessToken());
-            spotifyApi.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
-
-            System.out.println("Expires in: " + authorizationCodeCredentials.getExpiresIn());
-        } catch (IOException | SpotifyWebApiException | org.apache.hc.core5.http.ParseException e) {
-            System.out.println("Error: " + e.getMessage());
-        }
-
-        response.sendRedirect("http://localhost:3000/maingame");
-        return spotifyApi.getAccessToken();
+    public void getSpotifyUserCode(@RequestParam(value = "code", required = false) String userCode,
+                                   @RequestParam(value = "error", required = false) String error,
+                                   HttpServletResponse response) throws IOException {
+        authService.handleSpotifyUserCode(userCode, error, response);
     }
 
     @GetMapping("/refresh-token")
     public String refreshToken() {
-        authService.clientCredentials_Sync();
-        return "Token refreshed";
+        return authService.refreshToken();
     }
 }
 

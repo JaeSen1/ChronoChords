@@ -1,16 +1,14 @@
-import React from 'react';
 import Selection from '../components/Selection';
 import Grid from '@mui/material/Grid';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import { Box, Typography } from '@mui/material';
+import React, { useEffect } from 'react';
 
 const StartGame = () => {
     const { authUser, logout } = useAuth();
     const navigate = useNavigate();
-    const userId = authUser.userId;
-
     //Stores game modes Change this and it will Reflect in the front end.
         const gameModes = {
             'Classic': {
@@ -18,20 +16,20 @@ const StartGame = () => {
                 description: 'Guess the year of the song after listening to a 30 second snippet.',
                 imageUrl: "/classic2.webp" // Provide a default image URL
             },
-            'WIP': {
-                title: 'Multiplayer',
-                description: 'Guess the year of the song after listening to a 30 second snippet.',
-                imageUrl: "/classic.webp" // Provide a default image URL
-            },
-            'Square 3': {
+            'Daily': {
                 title: 'Daily',
                 description: 'Guess the year of the song after listening to a 30 second snippet.',
                 imageUrl: "/classic3.webp" // Provide a default image URL
             },
-            'Square 4': {
-                title: 'SongGuess',
+            'Multiplayer': {
+                title: 'Multiplayer',
                 description: 'Guess the year of the song after listening to a 30 second snippet.',
                 imageUrl: "/classic4.webp" // Provide a default image URL
+            },
+            'Coming Soon': {
+                title: 'Coming Soon',
+                description: 'Guess the year of the song after listening to a 30 second snippet.',
+                imageUrl: "/classic.webp" // Provide a default image URL
             }
         }
         
@@ -39,31 +37,37 @@ const StartGame = () => {
         const handleClick = (text) => {
             switch (text) {
                 case 'Classic':
-                    startGame(userId, text);
+                    startGame(text);
                     break;
-                case 'WIP':
+                case 'Multiplayer':
                     console.log("Method for Square 2 executed");
                     break;
-                case 'Square 3':
+                case 'Daily':
                     console.log("Method for Square 3 executed");
                     break;
-                case 'Square 4':
-                    console.log("Method for Square 4 executed");
+                case 'Coming Soon':
                     break;
                 default:
                     break;
             }
         };
 
+        useEffect(() => {
+            // Check if userId is not present
+            if (!authUser || !authUser.userId) {
+                navigate('/login', { state: { from: 'StartGame', message: 'You must be logged in to start a game.' } });
+            }
+        }, [authUser, navigate]);
 
-        const startGame = async (userId, gameModeKey) => {
+        const startGame = async (gameModeKey) => {
+            const userId = authUser.userId;
             const url = `http://localhost:8085/api/game/start/${userId}`;
             try {
                 const response = await axios.post(url);
                 const token = response.data; // The token received from the backend
                 if (token) {
                     // Navigate to the MainGame component with the token
-                    navigate(`/maingame/${token}`);
+                    navigate(`/maingame/${gameModeKey}/${token}`);
                 } else {
                     // Handle the case where no token is received
                     console.error('No token received');
