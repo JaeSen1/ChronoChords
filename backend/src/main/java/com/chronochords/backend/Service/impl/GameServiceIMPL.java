@@ -39,6 +39,21 @@ public class GameServiceIMPL implements GameService {
         }
     }
 
+    public void updateGameState(String token, int userGuess) {
+        Game game = gameSessionRepository.findByToken(token);
+        if (game != null) {
+            // Logic to update the round, calculate score based on userGuess
+            // and actual data, and update the game state
+
+            gameSessionRepository.save(game); // Save the updated state
+        }
+    }
+
+    // Method to fetch the current game state
+    public Game getCurrentGameState(String token) {
+        return gameSessionRepository.findByToken(token);
+    }
+
     /**
      * Nullifies gameToken so game cannot be reentered.
      * @param gameToken

@@ -1,5 +1,5 @@
 import '../App.css';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Slider from '../components/Slider';
 import RoundCount from '../components/RoundCount';
 import MusicPlayer from '../components/MusicPlayer';
@@ -9,21 +9,39 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
+const getInitialState = (token) => {
+    const savedGameState = sessionStorage.getItem(`gameState-${token}`);
+    if (savedGameState) {
+        const gameState = JSON.parse(savedGameState);
+        return gameState;
+    } else {
+        return {
+            round: 1,
+            score: null,
+            songs: [],
+            songIndex: 0,
+            reveal: false,
+            sliderLocked: false,
+            actualYear: null,
+            isSubmitted: false
+        };
+    }
+};
+
 export default function MainGame() {
     let { token } = useParams(); // token parameter passed from url.
-    
-    const [round, setRound] = useState(1);
-    const [score, setScore] = useState(null); // this will be reset every round
 
-    const [songs, setSongs] = useState([]);
+    const initialState = getInitialState(token);
 
-    const [songIndex, setSongIndex] = useState(0); // to keep track of the current song
-    const [reveal, setReveal] = useState(false); // to control revealing song details
-
+    const [round, setRound] = useState(initialState.round);
+    const [score, setScore] = useState(initialState.score);
+    const [songs, setSongs] = useState(initialState.songs);
+    const [songIndex, setSongIndex] = useState(initialState.songIndex); // to keep track of the current song
+    const [reveal, setReveal] = useState(initialState.reveal); // to control revealing song details
     const [userGuess, setUserGuess] = useState(1960); // initial value
-
-    const [sliderLocked, setSliderLocked] = useState(false);
-    const [actualYear, setActualYear] = useState(null);
+    const [sliderLocked, setSliderLocked] = useState(initialState.sliderLocked);
+    const [actualYear, setActualYear] = useState(initialState.actualYear);
+    const [isSubmitted, setIsSubmitted] = useState(initialState.isSubmitted);
     const navigate = useNavigate();
     //url: data.previewUrl
     //cover: data.images[0]
@@ -55,6 +73,24 @@ export default function MainGame() {
             .catch(error => console.error('Error fetching track details:', error));
     };
 
+    const saveGameState = useCallback(() => {
+        const gameState = {
+            round,
+            score,
+            songs,
+            songIndex,
+            reveal,
+            sliderLocked,
+            actualYear,
+            isSubmitted
+        };
+        sessionStorage.setItem(`gameState-${token}`, JSON.stringify(gameState));
+    }, [round, score, songs, songIndex, reveal, sliderLocked, actualYear, isSubmitted, token]);
+    
+    useEffect(() => {
+        saveGameState();
+    }, [saveGameState]);
+    
     useEffect(() => {
         // Define the function to validate the token
         const validateToken = async () => {
@@ -70,13 +106,12 @@ export default function MainGame() {
         validateToken();
     }, [token, navigate]);
     
-    
     const endGame = () => {
         try {
             // Construct the params to be sent with the POST request
             const params = new URLSearchParams();
             params.append('token', token);
-
+            sessionStorage.removeItem('gamestate-' + token);
             // Call the backend to end the game
             axios.post("http://localhost:8085/api/game/end", params);
 
@@ -86,8 +121,8 @@ export default function MainGame() {
             console.error('Error ending the game:', error);
         }
     };
-    const currentSong = songs[songIndex];
 
+    const currentSong = songs[songIndex];
     const numRounds = songs.length;
     
     // console.log(songs);
@@ -114,6 +149,7 @@ export default function MainGame() {
             setSliderLocked(false);
             setActualYear(null); // Reset for the next round
             setUserGuess(1960);
+            
         }
     };
 
@@ -168,7 +204,6 @@ export default function MainGame() {
         setActualYear(actualYear);
         setSliderLocked(true);
     };
-
     return (
         <div className="App">
             <RoundCount round={round} numRounds={numRounds}/>
