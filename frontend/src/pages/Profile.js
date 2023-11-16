@@ -1,8 +1,11 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useAuth } from '../AuthContext';
 import '../App.css';
 
 
 function ProfilePage() {
+    const { authUser } = useAuth();
+
     const initialState = {
       username: '',
       status: '',
@@ -12,15 +15,33 @@ function ProfilePage() {
     
     // useState should be initialized with initialState if you want to reset to these values
     const [profile, setProfile] = useState(initialState);
+    const fileInputRef = useRef();
+
+    const userId = authUser.userId;
+
+    useEffect(() => {
+      fetch(`http://localhost:8085/api/v1/user/profile/${userId}`)
+        .then(response => response.json())
+        .then(data => {
+          setProfile({
+            ...data,
+            img: data.img || initialState.img
+          });
+        })
+        .catch(error => console.error('Error:', error));
+    }, []);
   
     const handleInputChange = (e) => {
       const { name, value } = e.target;
       setProfile(prevState => ({ ...prevState, [name]: value }));
-      console.log("hi")
     };
   
     const handleImageChange = (e) => {
       if (e.target.files && e.target.files[0]) {
+        // Store the file object in the state
+        setProfile(prevState => ({ ...prevState, img: e.target.files[0] }));
+    
+        // You can still use FileReader to display the image preview
         const reader = new FileReader();
         reader.onload = (event) => {
           setProfile(prevState => ({ ...prevState, profilePic: event.target.result }));
@@ -28,47 +49,54 @@ function ProfilePage() {
         reader.readAsDataURL(e.target.files[0]);
       }
     };
+    
   
-    const fileInputRef = useRef();
   
     const handleSaveChanges = () => {
-        console.log('Profile data to save:', profile);
-      
-        // Send a POST request to your server endpoint:
-        fetch('http://localhost:8085/api/v1/users', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(profile),
-        })
-        .then(response => response.json())
-        .then(data => {
-          console.log('Success:', data);
-          // Reset the form here if needed
-          setProfile(initialState);
-          if (fileInputRef.current) {
-            fileInputRef.current.value = '';
-          }
-        })
-        .catch((error) => {
-          console.error('Error:', error);
-        });
+      console.log('Profile data to save:', profile);
+  
+      // Construct the request options for PUT request
+      const requestOptions = {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(profile)
       };
+  
+      // Send a PUT request to your server endpoint
+      fetch(`http://localhost:8085/api/v1/user/profile/${userId}`, requestOptions)
+          .then(response => {
+              if (!response.ok) {
+                  throw new Error('Network response was not ok');
+              }
+              return response.text(); // Parse the response as text, not as JSON
+          })
+          .then(text => {
+              console.log('Success:', text); // Handle the text response
+              // Additional success handling code here
+          })
+          .catch(error => {
+              console.error('Error:', error); // Handle errors
+          });
+  };
+  
   
     return (
       <div className="profile-page-container">
         <div className="profile-page">
           {/* Top Box - Display */}
           <div className="profile-display card">
-            <img
-              src={profile.profilePic || 'https://via.placeholder.com/150'}
-              alt="Profile"
-              className="profile-pic"
-            />
-            <h3 className='profile-page h3'>{profile.username}</h3>
-            <p className='profile-page p'>Status: {profile.status}</p>
-            <p className='profile-page p'>Description: {profile.description}</p>
+            <div className="profile-content">
+              <img
+                src={profile.profilePic || 'https://via.placeholder.com/150'}
+                alt="Profile"
+                className="profile-pic"
+              />
+              <div className="profile-text">
+                <h3 className='profile-page h3'>{profile.username}</h3>
+                <p className='profile-page p'>Status: {profile.status}</p>
+                <p className='profile-page p'>Description: {profile.description}</p>
+              </div>
+            </div>
           </div>
   
           {/* Bottom Box - Input */}
@@ -79,13 +107,6 @@ function ProfilePage() {
               accept="image/*"
               className="upload-btn"
               ref={fileInputRef}
-            />
-            <input
-              type="text"
-              name="username"
-              value={profile.username}
-              onChange={handleInputChange}
-              placeholder="Enter your name"
             />
             <input
               type="text"

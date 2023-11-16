@@ -122,6 +122,7 @@ p {
   background-color: #EF9F9F;
   transform: scale(1.05); 
 }
+
 /* Styling for the profile page container */
 .profile-page-container {
   display: flex;
@@ -130,11 +131,13 @@ p {
   min-height: 100vh;
   background: linear-gradient(135deg, #EF9F9F 0%, #ffccff 100%); /* Radiant gradient */
   padding: 20px;
+  overflow: hidden;
 }
 
 /* Retro-futuristic card design */
 .card, .profile-edit.card {
-  
+  min-height: 40vh;
+  min-width: 80vw;
   position: relative; /* Confirm this is set */
   transition: transform 0.3s ease, z-index 0.3s ease; /* Add z-index to the transition */
   background-color: #252525; /* Dark grey */
@@ -147,8 +150,8 @@ p {
   box-shadow: 0 0 20px rgba(239, 159, 159, 0.6); /* Soft glow */
   overflow: hidden;
   transition: transform 0.3s ease;
-  
 }
+
 .profile-page .h3{
   font-size: 45px;
   color: #EF9F9F;
@@ -250,13 +253,24 @@ p {
   box-shadow: 0 0 15px #ff6699;
 }
 
+/* New styling for the content inside the profile display */
+.profile-content {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Change from 'start' to 'flex-start' */
+}
+
 .profile-pic {
   width: 150px;
   height: 150px;
   border-radius: 50%;
-  margin-bottom: 20px;
+  margin-right: 3rem; /* Added margin to separate image from text */
   border: 4px solid #EF9F9F;
   box-shadow: 0 0 10px #EF9F9F;
+}
+
+.profile-text {
+  text-align: left; /* Align the text to the left */
 }
 
 /* Responsive design */

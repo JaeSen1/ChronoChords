@@ -1,4 +1,5 @@
 package com.chronochords.backend.Controller;
+import com.chronochords.backend.DTO.ProfileDTO;
 import com.chronochords.backend.DTO.UserDTO;
 import com.chronochords.backend.DTO.LoginDTO;
 import com.chronochords.backend.Entity.User;
@@ -73,9 +74,15 @@ public class  UserController {
         LoginMessage loginMessage = userService.loginUser(loginDTO);
         return ResponseEntity.ok(loginMessage);
     }
+    @GetMapping("/profile/{userId}")
+    public ResponseEntity<ProfileDTO> getUserProfile(@PathVariable Long userId) {
+        ProfileDTO profileDTO = userService.getUserProfile(userId);
+        return ResponseEntity.ok(profileDTO);
+    }
 
-    @GetMapping(path = "/getAll")
-    public List<User> getAllUsers(){
-        return UserService.getAllUsers();
+    @PutMapping("/profile/{userId}")
+    public ResponseEntity<?> updateUserProfile(@PathVariable Long userId, @RequestBody ProfileDTO profileDTO) {
+        userService.updateUserProfile(userId, profileDTO);
+        return ResponseEntity.ok("User profile updated successfully");
     }
 }

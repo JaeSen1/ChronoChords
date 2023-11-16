@@ -1,5 +1,6 @@
 package com.chronochords.backend.Service.impl;
 
+import com.chronochords.backend.DTO.ProfileDTO;
 import com.chronochords.backend.DTO.UserDTO;
 import com.chronochords.backend.DTO.LoginDTO;
 import com.chronochords.backend.Entity.User;
@@ -94,5 +95,33 @@ public class UserServiceIMPL implements UserService {
         } else {
             return new LoginMessage("Email does not exist", false);
         }
+    }
+
+    @Override
+    public ProfileDTO getUserProfile(Long userId) {
+        User user = userRepo.findById(userId).orElseThrow(
+                () -> new RuntimeException("User not found")
+        );
+
+        // Convert the User entity into a ProfileDTO and return
+        ProfileDTO profileDTO = new ProfileDTO();
+        profileDTO.setUsername(user.getUsername());
+        profileDTO.setDescription(user.getDescription());
+        profileDTO.setStatus(user.getStatus());
+
+        return profileDTO;
+    }
+
+    @Override
+    public void updateUserProfile(Long userId, ProfileDTO profileDTO) {
+        User user = userRepo.findById(userId).orElseThrow(
+                () -> new RuntimeException("User not found")
+        );
+
+        // Convert the User entity into a ProfileDTO and return
+        user.setDescription(profileDTO.getDescription());
+        user.setStatus(profileDTO.getStatus());
+
+        userRepo.save(user);
     }
 }

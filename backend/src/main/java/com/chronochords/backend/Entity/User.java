@@ -30,8 +30,6 @@ public class User {
     private String description;
     @Column(name = "status", length = 30)
     private String status;
-    @Column(name = "img", length = 40)
-    private String img;
 
     public User() {
     }
@@ -105,11 +103,5 @@ public class User {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-    public String getimg(){
-        return img;
-    }
-    public void setimg(String img){
-        this.img = img;
     }
 }
