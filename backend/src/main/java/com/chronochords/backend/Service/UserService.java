@@ -1,9 +1,12 @@
 package com.chronochords.backend.Service;
 
+import com.chronochords.backend.DTO.ProfileDTO;
 import com.chronochords.backend.DTO.UserDTO;
 import com.chronochords.backend.DTO.LoginDTO;
 import com.chronochords.backend.Entity.User;
 import com.chronochords.backend.payload.response.LoginMessage;
+import java.util.List;
+
 public interface UserService {
     String addUser(UserDTO userDTO);
     LoginMessage loginUser(LoginDTO loginDTO);
