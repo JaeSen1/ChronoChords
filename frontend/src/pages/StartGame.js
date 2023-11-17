@@ -40,10 +40,10 @@ const StartGame = () => {
                     startGame(text);
                     break;
                 case 'Multiplayer':
-                    console.log("Method for Square 2 executed");
+                    startGame(text);
                     break;
                 case 'Daily':
-                    console.log("Method for Square 3 executed");
+                    startGame(text);
                     break;
                 case 'Coming Soon':
                     break;
