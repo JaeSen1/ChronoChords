@@ -1,4 +1,5 @@
 package com.chronochords.backend.Controller;
+import com.chronochords.backend.DTO.ProfileDTO;
 import com.chronochords.backend.DTO.UserDTO;
 import com.chronochords.backend.DTO.LoginDTO;
 import com.chronochords.backend.Entity.User;
@@ -12,11 +13,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.List;
 
 @RestController
 @CrossOrigin
 @RequestMapping("api/v1/user")
-public class UserController {
+public class  UserController {
     @Autowired
     private UserService userService;
 
@@ -71,5 +73,16 @@ public class UserController {
     {
         LoginMessage loginMessage = userService.loginUser(loginDTO);
         return ResponseEntity.ok(loginMessage);
+    }
+    @GetMapping("/profile/{userId}")
+    public ResponseEntity<ProfileDTO> getUserProfile(@PathVariable Long userId) {
+        ProfileDTO profileDTO = userService.getUserProfile(userId);
+        return ResponseEntity.ok(profileDTO);
+    }
+
+    @PutMapping("/profile/{userId}")
+    public ResponseEntity<?> updateUserProfile(@PathVariable Long userId, @RequestBody ProfileDTO profileDTO) {
+        userService.updateUserProfile(userId, profileDTO);
+        return ResponseEntity.ok("User profile updated successfully");
     }
 }
