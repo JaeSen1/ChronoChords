@@ -25,41 +25,21 @@ ValueLabelComponent.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
-const marks = [
-  {
-    value: 1910,
-  },
-  {
-    value: 1920,
-  },
-  {
-    value: 1930,
-  },
-  {
-    value: 1940,
-  },
-  {
-    value: 1950,
-  },
-  {
-    value: 1960,
-  },
-  {
-    value: 1970,
-  },
-  {
-    value: 1980,
-  },
-  {
-    value: 1990,
-  },
-  {
-    value: 2000,
-  },
-  {
-    value: 2010,
+const generateMarks = () => {
+  const marks = [];
+  for (let value = 1900; value <= 2023; value += 1) {
+    const mark = { value };
+    if (value % 10 === 0) {
+      mark.label = value;
+    }
+    marks.push(mark);
   }
-];
+  return marks;
+};
+
+const marks = generateMarks();
+
+
 
 const normalButtonStyle = {
   backgroundColor: '#1B1B1B', 
@@ -73,9 +53,9 @@ const disabledButtonStyle = {
 
 function valuetext(value) {
     return `${value}`;
-  }
+}
 
-const TimelineSlider = styled(Slider)(({ theme, correctGuess }) => ({
+const TimelineSlider = styled(Slider)(({ theme, correctGuess, closeGuess, isActualYearMarkActive }) => ({
   color: 'grey',
   width: 1200,
   height: 43,
@@ -117,19 +97,44 @@ const TimelineSlider = styled(Slider)(({ theme, correctGuess }) => ({
     },
     
   },
+  '& .MuiSlider-mark[data-index="0"], .MuiSlider-mark[data-index="10"], .MuiSlider-mark[data-index="20"]': {
+    top: isActualYearMarkActive ? '34px' : '71px',
+    height: isActualYearMarkActive ? 'inherit' : '20px'
+  },
+  '& .MuiSlider-mark[data-index="30"], .MuiSlider-mark[data-index="40"], .MuiSlider-mark[data-index="50"]': {
+    top: isActualYearMarkActive ? '0' : '71px',
+    height: isActualYearMarkActive ? 'inherit' : '20px'
+  },
+  '& .MuiSlider-mark[data-index="60"], .MuiSlider-mark[data-index="70"], .MuiSlider-mark[data-index="80"]': {
+    top: isActualYearMarkActive ? '0' : '71px',
+    height: isActualYearMarkActive ? 'inherit' : '20px'
+  },
+  '& .MuiSlider-mark[data-index="90"], .MuiSlider-mark[data-index="100"], .MuiSlider-mark[data-index="110"]': {
+    top: isActualYearMarkActive ? '0' : '71px',
+    height: isActualYearMarkActive ? 'inherit' : '20px'
+  },
+  '& .MuiSlider-mark[data-index="120"]': {
+    top: isActualYearMarkActive ? '0' : '71px',
+    height: isActualYearMarkActive ? 'inherit' : '20px'
+  },
   '& .MuiSlider-mark': {
     backgroundColor: 'black',
-    height: 'inherit',
-    width: 1,
+    width: 2,
+    top: isActualYearMarkActive ? '0' : '65px',
+    height: isActualYearMarkActive ? 'inherit' : '7px',
     '&.MuiSlider-markActive': {
       opacity: 1,
       backgroundColor: 'currentColor',
-    },
+    }
+  },
+  '& .MuiSlider-markLabel': {
+    top: "80px",
+    fontSize: "20px",
   },
   '& .actualYearMarkLabel': { 
     // This class is for the actual year's label specifically
     position: 'absolute', // Keep as absolute to position in relation to the nearest positioned ancestor
-    top: '45px', // Positioning the label below the slider (you may need to adjust this value based on your layout)
+    top: '0px', // Positioning the label below the slider (you may need to adjust this value based on your layout)
     left: '50%', // Centering the label relatively to its parent
     transform: 'translateX(-50%)', // Ensures the centering by offsetting half of the element's width
     display: 'flex',
@@ -158,12 +163,6 @@ const TimelineSlider = styled(Slider)(({ theme, correctGuess }) => ({
       // Adjust colors and box-shadow as needed
     },
   },
-  '& .actualYearMark': { // We are targeting the specific style of the actualYear's mark
-    height: 8, // making it more prominent
-    width: 2,
-    backgroundColor: 'blue', // making it different and noticeable, change color as needed
-  },
-
 }));
 
 
@@ -172,7 +171,9 @@ export default function CustomizedSlider(props) {
   const { value, onChange, onSubmit, onNextRound, finalRound, locked, actualYear } = props;
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+  const isActualYearMarkActive = locked;
   const correctGuess = locked && value === actualYear;
+  const closeGuess = !correctGuess && locked && Math.abs(value - actualYear) <= 2;
 
   const handleClick = () => {
     if (!isSubmitted) {
@@ -193,12 +194,31 @@ export default function CustomizedSlider(props) {
   if (locked && actualYear) {
     const Icon = correctGuess ? CheckIcon : CloseIcon; // Choose the icon based on 'correctGuess'.
     const iconColor = correctGuess ? 'green' : 'red'; // Choose the color based on 'correctGuess'.
-    const iconTopPosition = correctGuess ? '-110px' : '-50px'; // Adjust the top position based on 'correctGuess'.
+
+    let iconTopPosition;
+    if (correctGuess || closeGuess) {
+      iconTopPosition = '-160px';
+    } else {
+      iconTopPosition = '-110px';
+    }
+
+    let guessLabel;
+    if (correctGuess) {
+      guessLabel = <span style={{ fontSize: '10px' }}>PERFECT</span>;
+    } else if (closeGuess) {
+    guessLabel = 
+    <span style={{ fontSize: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <span style={{ fontSize: '12px' }}>{actualYear.toString()}</span>
+      <span>CLOSE!</span>
+    </span>
+    } else {
+      guessLabel = actualYear.toString();
+    }
 
     actualYearMark = [{
       value: actualYear,
       label: (
-        <div style={{ position: 'relative', width: 60, height: 50 }}> {/* Increased height to accommodate icon */}
+        <div style={ closeGuess ? { position: 'relative', width: 60, height: 40 } : { position: 'relative', width: 60, height: 30 }}> {/* Increased height to accommodate icon */}
           <Icon style={{ 
             color: iconColor, 
             position: 'absolute', 
@@ -207,13 +227,13 @@ export default function CustomizedSlider(props) {
             transform: 'translateX(-50%)',
             fontSize: '2rem',  // Optional: adjust icon size as necessary
           }} />
-          <div className="actualYearMarkLabel" style={{ position: 'absolute', bottom: 0, width: '100%' }}>
-            {correctGuess ? <span style={{ fontSize: '10px' }}>PERFECT</span> : actualYear.toString()}
+          <div className="actualYearMarkLabel" style={{ position: 'absolute', bottom: 0, width: '100%', height: '100%' }}>
+            {guessLabel}
           </div>
         </div>
       ),
-      className: "actualYearMark",
     }];
+
   }
 
   return (
@@ -231,6 +251,7 @@ export default function CustomizedSlider(props) {
         valueLabelDisplay="on"
         value={value}
         onChange={onChange} // <- here it's used, it will call handleSliderChange from MainGame
+        isActualYearMarkActive={isActualYearMarkActive}
         marks={locked ? actualYearMark : marks}
         disabled={locked} // this makes the slider unmovable when it's true
         step={1}

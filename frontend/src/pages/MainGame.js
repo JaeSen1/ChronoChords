@@ -1,32 +1,142 @@
 import '../App.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Slider from '../components/Slider';
-import MusicPlayer from '../components/MusicPlayer';
 import RoundCount from '../components/RoundCount';
+import MusicPlayer from '../components/MusicPlayer';
 import Popup from '../components/Popup';
 import ScoreDisplay from '../components/ScoreDisplay';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import Alert from '@mui/material/Alert';
 
+const getInitialState = (token) => {
+    const savedGameState = sessionStorage.getItem(`gameState-${token}`);
+    if (savedGameState) {
+        const gameState = JSON.parse(savedGameState);
+        return gameState;
+    } else {
+        return {
+            round: 1,
+            score: null,
+            songs: [],
+            songIndex: 0,
+            reveal: false,
+            sliderLocked: false,
+            actualYear: null
+        };
+    }
+};
 
 export default function MainGame() {
-    const [round, setRound] = useState(1);
-    const [score, setScore] = useState(null); // this will be reset every round
-    const [songIndex, setSongIndex] = useState(0); // to keep track of the current song
-    const [reveal, setReveal] = useState(false); // to control revealing song details
-
+    let { token } = useParams(); // token parameter passed from url.
+    let {gamemode} = useParams();
+    const [numRounds, setNumRounds] = useState(10);
+    const initialState = getInitialState(token);
+    const [notification, setNotification] = useState('');
+    const [round, setRound] = useState(initialState.round);
+    const [score, setScore] = useState(initialState.score);
+    const [songs, setSongs] = useState(initialState.songs);
+    const [songIndex, setSongIndex] = useState(initialState.songIndex); // to keep track of the current song
+    const [reveal, setReveal] = useState(initialState.reveal); // to control revealing song details
     const [userGuess, setUserGuess] = useState(1960); // initial value
+    const [sliderLocked, setSliderLocked] = useState(initialState.sliderLocked);
+    const [actualYear, setActualYear] = useState(initialState.actualYear);
+    const navigate = useNavigate();
+    //url: data.previewUrl
+    //cover: data.images[0]
+    //year: data.album.releaseDate (set to year only)
+    //artist: data.artists[0].name
+    //album: data.album.name
+    //artistDescription: 
 
-    const [sliderLocked, setSliderLocked] = useState(false);
-    const [actualYear, setActualYear] = useState(null);
+    const fetchAllTrackDetails = () => {
+        fetch(`http://localhost:8085/spotify/loadallmusic`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const formattedSongs = data.map(songData => ({
+                    url: songData.previewUrl,
+                    title: songData.songName,
+                    cover: songData.albumCover,
+                    year: new Date(songData.releaseYear).getFullYear().toString(),
+                    artist: songData.artistName,
+                    album: songData.albumName,
+                    //artistDescription: songData.
+                }));
+                setSongs(formattedSongs);
+            })
+            .catch(error => console.error('Error fetching track details:', error));
+    };
 
-    const songs = [
-        { url: 'music/beatlesholdyourhand.mp3', description: '"I Want to Hold Your Hand" is a timeless classic by The Beatles, first released in 1963. The track marked a pivotal moment in the band\'s career, propelling them to international stardom and igniting Beatlemania. Written by John Lennon and Paul McCartney, the song\'s uplifting melody, enthusiastic vocals, and exuberant lyrics encapsulate the euphoria of new love and the desire for connection that is universally relatable.', cover: 'covers/beatlesholdyourhand.jpg', year: 1963, title: 'I Want to Hold Your Hand', artist: 'The Beatles', album: 'Meet the Beatles!' },
-        { url: 'music/kissmethruthephone.mp3', description: '"Kiss Me Thru the Phone" is a signature track from Soulja Boy Tell\'em, released in 2008, featuring emotive vocals from the R&B singer Sammie. This song, which quickly became a staple of late 2000s pop culture, blends hip-hop rhythms with elements of pop and R&B, creating an anthem for long-distance relationships in the digital age.', cover: 'covers/kissmethruthephone.jpg', year: 2008, title: 'Kiss Me Thru the Phone', artist: 'Soulja Boy', album: 'iSouljaBoyTellem' },
-        { url: 'music/taylorswift22.mp3', description: '"22" is a song by American singer-songwriter Taylor Swift, from her fourth studio album, "Red" (2012). The song was released as the album\'s fourth single on March 12, 2013. Swift, known for her narrative songwriting, presents a buoyant track that reflects the ups and downs of the early twenties age.', cover: 'covers/taylorswift22.png', year: 2012, title: '22', artist: 'Taylor Swift', album: 'Red' },
-        { url: 'music/TootTootTootsie.mp3', description: '"Toot, Toot, Tootsie (Goo\' Bye)" is a classic song that stands as a hallmark of early 20th-century music, originally recorded by Al Jolson. This song, widely popular in the 1920s, is a quintessential show tune, best known for its vibrant, catchy melody and spirited "goodbye" theme that almost anyone can sing along to.', cover: 'covers/TootTootTootsie.jpg', year: 1922, title: 'Toot, Toot, Tootsie (Goo\' Bye!)', artist: 'Al Jolson', album: '' },
-        { url: 'music/vanhalenjump.mp3', description: '"Jump" is perhaps one of the most iconic songs by American rock band Van Halen. Released in 1984, it immediately claimed the airwaves and the top of the charts, becoming an instant classic in the rock genre and beyond. Synonymous with the \'80s rock era\'s exuberance and innovation, "Jump" is emblematic of a time when musical boundaries were relentlessly pushed to new frontiers.', cover: 'covers/vanhalenjump.jpg', year: 1984, title: 'Jump', artist: 'Van Halen', album: '1984' },
-    ]
+    const saveGameState = useCallback(() => {
+        const gameState = {
+            round,
+            score,
+            songs,
+            songIndex,
+            reveal,
+            sliderLocked,
+            actualYear,
+        };
+        sessionStorage.setItem(`gameState-${token}`, JSON.stringify(gameState));
+    }, [round, score, songs, songIndex, reveal, sliderLocked, actualYear, token]);
     
-    const currentSong = songs[songIndex];
+    useEffect(() => {
+        saveGameState();
+    }, [saveGameState]);
+    
+    useEffect(() => {
+        // Define the function to validate the token
+        const validateToken = async () => {
+            if(token === "Guest"){
+                setNotification("Your progress will not be saved as you are playing as a guest.");
+                fetchAllTrackDetails();
+            } else {
+            try {
+                await axios.get(`http://localhost:8085/api/game/validate-token/${token}`);
+                // If the token is valid, we can proceed to fetch track details or other actions
+                fetchAllTrackDetails();
+            } catch (error) {
+                // If the token is invalid, redirect to the login page or another appropriate page
+                navigate('/');
+            }
+        };
+    }
+        validateToken();
+    }, [token, navigate]);
+    
+    const endGame = () => {
+        try {
+            // Construct the params to be sent with the POST request
+            const params = new URLSearchParams();
+            params.append('token', token);
+            sessionStorage.removeItem('gamestate-' + token);
+            // Call the backend to end the game
+            axios.post("http://localhost:8085/api/game/end", params);
+
+            // Here you can navigate to a different route or display a game over message
+            navigate('/'); // Redirect to the game selection page
+        } catch (error) {
+            console.error('Error ending the game:', error);
+        }
+    };
+
+    const currentSong = songs[songIndex]; 
+
+    useEffect(() => {
+        if (gamemode === 'Classic') {
+            setNumRounds(songs.length);
+        } else {
+            
+        }
+    }, [gamemode, token, songs.length]); 
+    
+    // console.log(songs);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -36,7 +146,13 @@ export default function MainGame() {
 
     // 2. Handle advancing to the next game/round
     const handleNextGame = () => {
-        if (round < 5) {
+        console.log(round);
+        if (round >= numRounds-1) { //Check for +1 since it starts at 0
+            // If this was the last round, end the game
+            sessionStorage.removeItem('gameState-'+token);
+            endGame();
+        } else {
+            // Not the last round yet, advance to the next one
             setRound(round + 1);
             setSongIndex((songIndex + 1) % songs.length); // go to the next song, loop back to the first song if needed
             setScore(null); // reset the score
@@ -44,6 +160,7 @@ export default function MainGame() {
             setSliderLocked(false);
             setActualYear(null); // Reset for the next round
             setUserGuess(1960);
+            
         }
     };
 
@@ -52,7 +169,7 @@ export default function MainGame() {
     };
 
     const handleGuess = () => {
-        const actualYear = currentSong.year;
+        const actualYear = Number(currentSong.year);
         const difference = Math.abs(actualYear - userGuess); // Calculate the difference in years.
     
         // Constants for calculation
@@ -97,11 +214,22 @@ export default function MainGame() {
         // Set the actual year and lock the slider after the user makes a guess
         setActualYear(actualYear);
         setSliderLocked(true);
+        axios.post(`http://localhost:8085/api/game/score/${token}`, { score: newScore }, {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+          .then(response => {
+            // Handle success
+          })
+          .catch(error => {
+            // Handle error
+          });
+          
     };
-
     return (
         <div className="App">
-            <RoundCount round={round} />
+            <RoundCount round={round} numRounds={numRounds}/>
             <ScoreDisplay score={score} />
             <div className="Slider-container">
                 <Slider 
@@ -109,33 +237,40 @@ export default function MainGame() {
                     onChange={handleSliderChange} 
                     onSubmit={handleGuess} 
                     onNextRound={handleNextGame}
-                    finalRound={round >= 5} // true if it's the final round, else false
+                    finalRound={round >= numRounds} // true if it's the final round, else false
                     locked={sliderLocked}
                     actualYear={actualYear}
                 />
             </div>
             <div className="Musicplayer-container">
             <MusicPlayer 
-                url={currentSong.url} 
+                url={currentSong?.url} 
                 songDetails={{
-                    cover: currentSong.cover,
-                    artist: currentSong.artist,
-                    title: currentSong.title,
-                    album: currentSong.album,
+                    cover: currentSong?.cover,
+                    artist: currentSong?.artist,
+                    title: currentSong?.title,
+                    album: currentSong?.album,
                 }}
                 reveal={reveal}
                 onMoreInfo={handleOpenModal}  // Passing the function to open the modal
             />
             <Popup
                 songData={{
-                    title: currentSong.title,
-                    artist: currentSong.artist,
-                    album: currentSong.album,
-                    description: currentSong.description
+                    title: currentSong?.title,
+                    artist: currentSong?.artist,
+                    album: currentSong?.album,
+                    description: currentSong?.description
                 }}
                 open={isModalOpen} 
                 onClose={() => setIsModalOpen(false)}  // Function to close the modal
             />
+            </div>
+            <div>
+            {notification && (
+                <Alert severity="warning" style={{ color: 'black'}}>
+                    {notification}
+                </Alert>
+            )}
             </div>
         </div>
     );

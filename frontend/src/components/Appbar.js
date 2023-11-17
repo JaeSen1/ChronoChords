@@ -6,8 +6,10 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Menu from '../components/Menu'
+import { useAuth } from '../AuthContext';
 
 export default function Appbar() {
+  const { authUser, logout } = useAuth();
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" sx={{ backgroundColor: '#1B1B1B' }}>
@@ -31,8 +33,19 @@ export default function Appbar() {
 
           {/* Right section (if you have icons or buttons to the right) */}
           <Box>
-            <Link to="/register" style={{ color: 'inherit', textDecoration: 'none' }}><Button color="inherit">Register</Button></Link>
-            <Link to="/login" style={{ color: 'inherit', textDecoration: 'none' }}><Button color="inherit">Login</Button></Link>
+            <div>
+              {authUser ? (
+                <div>
+                  <Link to="/profile" style={{ color: 'inherit', textDecoration: 'none' }}><Button color="inherit">{authUser.username}'s Profile</Button></Link>
+                  <Link to="/" style={{ color: 'inherit', textDecoration: 'none' }} onClick={(logout)}><Button color="inherit">Logout</Button></Link>
+                </div>
+              ) : (
+                <div>
+                  <Link to="/register" style={{ color: 'inherit', textDecoration: 'none' }}><Button color="inherit">Register</Button></Link>
+                  <Link to="/login" style={{ color: 'inherit', textDecoration: 'none' }}><Button color="inherit">Login</Button></Link>
+                </div>
+              )}
+            </div>
           </Box>
           
         </Toolbar>
