@@ -48,10 +48,7 @@ const Selection = ({ text, onClick, gameInfo, imageUrl }) => {
                         backgroundRepeat: 'no-repeat'
                     }}
                 >
-                <Typography variant="h5" component="div" sx={{ color: 'white', zIndex: 2, marginTop: 0, fontWeight: 'bold' }}>
-                            {text}
-                </Typography>
-                    <IconButton sx={{marginTop: 0}} onClick={(e) => {
+                    <IconButton sx={{marginTop: -42, marginRight: 32, '& svg': { fontSize: '2rem'}}} onClick={(e) => {
                     e.stopPropagation(); // Prevents triggering the square's main onClick
                     handleOpen();
                     }}>

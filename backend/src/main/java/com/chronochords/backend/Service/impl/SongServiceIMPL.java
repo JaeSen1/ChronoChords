@@ -39,7 +39,7 @@ public class SongServiceIMPL implements SongService {
 
     @Override
     public List<Song> loadMusicFromDatabase() {
-        Pageable limit = PageRequest.of(0, 10000); // Fetching the first 20 songs
+        Pageable limit = PageRequest.of(0, 10000); // Fetching the first 10000 songs
         return songRepo.findAll(limit).getContent(); // Return the list of Song entities
     }
 

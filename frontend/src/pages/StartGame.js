@@ -21,11 +21,11 @@ const StartGame = () => {
                 description: 'Guess the year of the song after listening to a 30 second snippet.',
                 imageUrl: "/classic3.webp" // Provide a default image URL
             },
-            'Multiplayer': {
-                title: 'Multiplayer',
-                description: 'Guess the year of the song after listening to a 30 second snippet.',
-                imageUrl: "/classic4.webp" // Provide a default image URL
-            },
+            // 'Multiplayer': {
+            //     title: 'Multiplayer',
+            //     description: 'Guess the year of the song after listening to a 30 second snippet.',
+            //     imageUrl: "/classic4.webp" // Provide a default image URL
+            // },
             'Coming Soon': {
                 title: 'Coming Soon',
                 description: 'Guess the year of the song after listening to a 30 second snippet.',

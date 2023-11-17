@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 export default function DevLandingPage() {
     const navigate = useNavigate();
-    const navigateToGameSelection = () => {
-        navigate('/gameselection');
-    };
+    
     const navigateToDecadeChart = () => {
         navigate('/decadechart');
     };
@@ -83,7 +81,7 @@ export default function DevLandingPage() {
                 console.log(data); // Process the response data as needed
                 setTrackName(data.name);
             })
-            .catch(error => console.error('Error fetching track details:', error));
+        .catch(error => console.error('Error fetching track details:', error));
     };
 
     const fetchAllTrackDetailsWithLimit = () => {
@@ -210,14 +208,11 @@ export default function DevLandingPage() {
             <div style={styles.inputRow}>
                 <button style={styles.button} onClick={fetchAllTrackDetailsWithLimit}>Display Songs from Database With Limit</button>
             </div>   
-            <div>
+
             <div style={styles.inputRow}>
                 <button style={styles.button} onClick={navigateToDecadeChart}>View Decade Distribution of Database</button>
             </div>
-            <button style={styles.button} onClick={navigateToGameSelection}>
-                Go to Game Selection (Must Be Logged In)
-            </button>
-            </div>
+
             <div style={styles.inputRow}>
             <button style={styles.button} onClick={getSpotifyUserLogin}>Refresh Token</button>
             </div>

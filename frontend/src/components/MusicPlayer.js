@@ -222,11 +222,11 @@ export default function MusicPlayerSlider({ url, songDetails, reveal, onMoreInfo
                   More Info
                 </Button>
               )}
-              {reveal && (
+              {/* {reveal && (
                 <Button variant="contained" style={{ backgroundColor: '#1db954', color: '#FFFFFF', mt: 1, marginLeft: 10 }} onClick={onAddToPlaylist}>
                   Add to Playlist
                 </Button>
-              )}
+              )} */}
             </Box>
           </Box>
         </Box>
