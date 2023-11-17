@@ -2,7 +2,7 @@ import '../App.css';
 import React, { useState, useEffect, useCallback } from 'react';
 import Slider from '../components/Slider';
 import RoundCount from '../components/RoundCount';
-import MusicControls from '../components/MusicControls';
+import MusicPlayer from '../components/MusicPlayer';
 import Popup from '../components/Popup';
 import ScoreDisplay from '../components/ScoreDisplay';
 import axios from 'axios';
@@ -23,12 +23,7 @@ const getInitialState = (token) => {
             songIndex: 0,
             reveal: false,
             sliderLocked: false,
-<<<<<<< HEAD
-            actualYear: null,
-=======
             actualYear: null
-
->>>>>>> 9995afe (FIX: Reverted changes to pre-auth changes. Added newer changes that did not affect functionality.)
         };
     }
 };
@@ -141,17 +136,6 @@ export default function MainGame() {
         setIsModalOpen(true);
     };
 
-    const addToPlaylist = () => {
-        axios.get('http://localhost:8085/api/login')
-            .then(response => {
-                // Redirect user to Spotify login page
-                window.location.href = response.data;
-            })
-            .catch(error => {
-                console.error('Error during login:', error);
-            });
-    };
-
     // 2. Handle advancing to the next game/round
     const handleNextGame = () => {
         console.log(round);
@@ -225,7 +209,7 @@ export default function MainGame() {
     };
     return (
         <div className="App">
-            <RoundCount round={round} numRounds={numRounds} />
+            <RoundCount round={round} numRounds={numRounds}/>
             <ScoreDisplay score={score} />
             <div className="Slider-container">
                 <Slider 
@@ -239,7 +223,7 @@ export default function MainGame() {
                 />
             </div>
             <div className="Musicplayer-container">
-            <MusicControls
+            <MusicPlayer 
                 url={currentSong?.url} 
                 songDetails={{
                     cover: currentSong?.cover,
@@ -249,7 +233,6 @@ export default function MainGame() {
                 }}
                 reveal={reveal}
                 onMoreInfo={handleOpenModal}  // Passing the function to open the modal
-                onAddToPlaylist={addToPlaylist} // Passing the function to add to spotify playlist
             />
             <Popup
                 songData={{
