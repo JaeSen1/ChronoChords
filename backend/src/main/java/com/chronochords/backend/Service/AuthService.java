@@ -7,5 +7,7 @@ public interface AuthService {
     String createSpotifyAuthorizationURI();
     void handleSpotifyUserCode(String userCode, String error, HttpServletResponse response) throws IOException;
     String refreshToken();
+
+    void clientCredentials_Sync();
 }
 
