@@ -30,7 +30,8 @@ const getInitialState = (token) => {
 
 export default function MainGame() {
     let { token } = useParams(); // token parameter passed from url.
-
+    let {gamemode} = useParams();
+    const [numRounds, setNumRounds] = useState(10);
     const initialState = getInitialState(token);
     const [notification, setNotification] = useState('');
     const [round, setRound] = useState(initialState.round);
@@ -125,8 +126,15 @@ export default function MainGame() {
         }
     };
 
-    const currentSong = songs[songIndex];
-    const numRounds = 10;
+    const currentSong = songs[songIndex]; 
+
+    useEffect(() => {
+        if (gamemode === 'Classic') {
+            setNumRounds(songs.length);
+        } else {
+            
+        }
+    }, [gamemode, token, songs.length]); 
     
     // console.log(songs);
 
