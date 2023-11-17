@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 export default function DevLandingPage() {
     const navigate = useNavigate();
-    
+
     const navigateToDecadeChart = () => {
         navigate('/decadechart');
     };
@@ -58,6 +58,10 @@ export default function DevLandingPage() {
             console.error('Error:', error);
         });
     }
+
+    useEffect(() => {
+        getSpotifyUserLogin();
+    }, []); // The empty array ensures this effect runs once after initial render
 
     const [trackName, setTrackName] = useState('');
     const [playlistName, setPlaylistName] = useState('');
