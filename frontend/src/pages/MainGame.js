@@ -206,6 +206,18 @@ export default function MainGame() {
         // Set the actual year and lock the slider after the user makes a guess
         setActualYear(actualYear);
         setSliderLocked(true);
+        axios.post(`http://localhost:8085/api/game/score/${token}`, { score: newScore }, {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+          .then(response => {
+            // Handle success
+          })
+          .catch(error => {
+            // Handle error
+          });
+          
     };
     return (
         <div className="App">

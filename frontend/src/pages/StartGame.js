@@ -3,11 +3,11 @@ import Grid from '@mui/material/Grid';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
-import { Box, Typography } from '@mui/material';
-import React, { useEffect } from 'react';
+import { Box} from '@mui/material';
+import React, { } from 'react';
 
 const StartGame = () => {
-    const { authUser, logout } = useAuth();
+    const { authUser } = useAuth();
     const navigate = useNavigate();
     //Stores game modes Change this and it will Reflect in the front end.
         const gameModes = {
