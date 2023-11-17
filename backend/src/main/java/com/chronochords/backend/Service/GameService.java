@@ -7,4 +7,6 @@ public interface GameService {
     void endGame(String gameToken);
 
     boolean validateToken(String token);
+
+    void addGuessScore(String token, int score);
 }

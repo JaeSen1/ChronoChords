@@ -38,6 +38,13 @@ public class GameServiceIMPL implements GameService {
             return true;
         }
     }
+    public void addGuessScore(String token, int score) {
+        Game game = gameSessionRepository.findByToken(token);
+        if (game != null) {
+            game.addGuessScore(score);
+            gameSessionRepository.save(game);
+        }
+    }
 
     public void updateGameState(String token, int userGuess) {
         Game game = gameSessionRepository.findByToken(token);
@@ -47,6 +54,15 @@ public class GameServiceIMPL implements GameService {
 
             gameSessionRepository.save(game); // Save the updated state
         }
+    }
+
+
+    public GameRepo getGameSessionRepository() {
+        return gameSessionRepository;
+    }
+
+    public void setGameSessionRepository(GameRepo gameSessionRepository) {
+        this.gameSessionRepository = gameSessionRepository;
     }
 
     // Method to fetch the current game state
@@ -61,7 +77,8 @@ public class GameServiceIMPL implements GameService {
     public void endGame(String gameToken) {
         Game session = gameSessionRepository.findByToken(gameToken);
         if (session != null) {
-            gameSessionRepository.delete(session); // End the game session
+            session.setToken(null); // Nullify the token
+            gameSessionRepository.save(session); // Save the updated session
         }
     }
 }

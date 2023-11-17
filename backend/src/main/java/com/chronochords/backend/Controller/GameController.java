@@ -30,6 +30,26 @@ public class GameController {
         String token = gameService.startNewGame(user);
         return ResponseEntity.ok(token);
     }
+    public static class ScoreWrapper {
+        private int score;
+        public ScoreWrapper() {}
+        public int getScore() {
+            return score;
+        }
+        public void setScore(int score) {
+            this.score = score;
+        }
+    }
+    @PostMapping("/score/{token}")
+    public ResponseEntity<?> addScore(@PathVariable String token, @RequestBody ScoreWrapper scoreWrapper) {
+        try {
+            gameService.addGuessScore(token, scoreWrapper.getScore());
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding score");
+        }
+    }
+
     @GetMapping("/validate-token/{token}")
     public ResponseEntity<?> validateToken(@PathVariable String token) {
         boolean isValid = gameService.validateToken(token); // Implement this method in your GameService
