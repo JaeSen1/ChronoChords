@@ -8,6 +8,7 @@ import ScoreDisplay from '../components/ScoreDisplay';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import Alert from '@mui/material/Alert';
 
 const getInitialState = (token) => {
     const savedGameState = sessionStorage.getItem(`gameState-${token}`);
@@ -22,7 +23,12 @@ const getInitialState = (token) => {
             songIndex: 0,
             reveal: false,
             sliderLocked: false,
+<<<<<<< HEAD
             actualYear: null,
+=======
+            actualYear: null
+
+>>>>>>> 9995afe (FIX: Reverted changes to pre-auth changes. Added newer changes that did not affect functionality.)
         };
     }
 };
@@ -31,7 +37,7 @@ export default function MainGame() {
     let { token } = useParams(); // token parameter passed from url.
 
     const initialState = getInitialState(token);
-
+    const [notification, setNotification] = useState('');
     const [round, setRound] = useState(initialState.round);
     const [score, setScore] = useState(initialState.score);
     const [songs, setSongs] = useState(initialState.songs);
@@ -91,15 +97,20 @@ export default function MainGame() {
     useEffect(() => {
         // Define the function to validate the token
         const validateToken = async () => {
+            if(token === "Guest"){
+                setNotification("Your progress will not be saved as you are playing as a guest.");
+                fetchAllTrackDetails();
+            } else {
             try {
                 await axios.get(`http://localhost:8085/api/game/validate-token/${token}`);
                 // If the token is valid, we can proceed to fetch track details or other actions
                 fetchAllTrackDetails();
             } catch (error) {
                 // If the token is invalid, redirect to the login page or another appropriate page
-                navigate('/gameselection');
+                navigate('/');
             }
         };
+    }
         validateToken();
     }, [token, navigate]);
     
@@ -113,14 +124,14 @@ export default function MainGame() {
             axios.post("http://localhost:8085/api/game/end", params);
 
             // Here you can navigate to a different route or display a game over message
-            navigate('/gameselection'); // Redirect to the game selection page
+            navigate('/'); // Redirect to the game selection page
         } catch (error) {
             console.error('Error ending the game:', error);
         }
     };
 
     const currentSong = songs[songIndex];
-    const numRounds = songs.length;
+    const numRounds = 10;
     
     // console.log(songs);
 
@@ -146,7 +157,7 @@ export default function MainGame() {
         console.log(round);
         if (round >= numRounds-1) { //Check for +1 since it starts at 0
             // If this was the last round, end the game
-            console.log("Game Ended");
+            sessionStorage.removeItem('gameState-'+token);
             endGame();
         } else {
             // Not the last round yet, advance to the next one
@@ -250,6 +261,13 @@ export default function MainGame() {
                 open={isModalOpen} 
                 onClose={() => setIsModalOpen(false)}  // Function to close the modal
             />
+            </div>
+            <div>
+            {notification && (
+                <Alert severity="warning" style={{ color: 'black'}}>
+                    {notification}
+                </Alert>
+            )}
             </div>
         </div>
     );

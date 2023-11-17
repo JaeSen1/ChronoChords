@@ -1,7 +1,5 @@
 package com.chronochords.backend.Service;
-import java.util.List;
 
-import com.chronochords.backend.DTO.ProfileDTO;
 import com.chronochords.backend.DTO.UserDTO;
 import com.chronochords.backend.DTO.LoginDTO;
 import com.chronochords.backend.Entity.User;

@@ -39,6 +39,7 @@ public class GameController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
         }
     }
+
     @PostMapping("/end")
     public ResponseEntity<?> endGame(@RequestParam String token) {
         gameService.endGame(token);

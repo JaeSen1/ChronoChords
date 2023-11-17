@@ -3,11 +3,11 @@ import Grid from '@mui/material/Grid';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import React, { useEffect } from 'react';
 
 const StartGame = () => {
-    const { authUser } = useAuth();
+    const { authUser, logout } = useAuth();
     const navigate = useNavigate();
     //Stores game modes Change this and it will Reflect in the front end.
         const gameModes = {
@@ -52,29 +52,54 @@ const StartGame = () => {
             }
         };
 
-        useEffect(() => {
-            // Check if userId is not present
-            if (!authUser || !authUser.userId) {
-                navigate('/login', { state: { from: 'StartGame', message: 'You must be logged in to start a game.' } });
-            }
-        }, [authUser, navigate]);
-
         const startGame = async (gameModeKey) => {
-            const userId = authUser.userId;
-            const url = `http://localhost:8085/api/game/start/${userId}`;
-            try {
-                const response = await axios.post(url);
-                const token = response.data; // The token received from the backend
-                if (token) {
-                    // Navigate to the MainGame component with the token
-                    navigate(`/${gameModeKey}/${token}`);
-                } else {
-                    // Handle the case where no token is received
-                    console.error('No token received');
+            switch(gameModeKey){
+                case 'Classic':
+                    if (!authUser || !authUser.userId) {
+                        navigate('/login', { state: { from: 'StartGame', message: 'You must be logged in to start a Classic Unlimited game.'} });
+                    } else {
+                        const userId = authUser.userId;
+                        const url = `http://localhost:8085/api/game/start/${userId}`;
+                    try {
+                        const response = await axios.post(url);
+                        const token = response.data; // The token received from the backend
+                        if (token) {
+                            // Navigate to the MainGame component with the token
+                            navigate(`/${gameModeKey}/${token}`);
+                        } else {
+                            // Handle the case where no token is received
+                            console.error('No token received');
+                        }
+                    } catch (error) {
+                        // Handle errors: user not found, server error, etc.
+                        console.error('Error starting game:', error);
+                    }
                 }
-            } catch (error) {
-                // Handle errors: user not found, server error, etc.
-                console.error('Error starting game:', error);
+                    break;
+                case 'Daily':
+                    if (!authUser || !authUser.userId) {
+                        navigate(`${gameModeKey}/Guest`)
+                    } else {
+                        const userId = authUser.userId;
+                        const url = `http://localhost:8085/api/game/start/${userId}`;
+                    try {
+                        const response = await axios.post(url);
+                        const token = response.data; // The token received from the backend
+                        if (token) {
+                            // Navigate to the MainGame component with the token
+                            navigate(`/${gameModeKey}/${token}`);
+                        } else {
+                            // Handle the case where no token is received
+                            console.error('No token received');
+                        }
+                    } catch (error) {
+                        // Handle errors: user not found, server error, etc.
+                        console.error('Error starting game:', error);
+                    }
+                }
+                    break;
+                default:
+                    break;
             }
         };
         

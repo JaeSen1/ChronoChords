@@ -150,7 +150,6 @@ export default function DevLandingPage() {
         })
         .catch(error => console.error('Error:', error));
     };
-
     return (
         <div style={styles.container}>
 
