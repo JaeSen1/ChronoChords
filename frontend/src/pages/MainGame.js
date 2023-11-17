@@ -147,7 +147,7 @@ export default function MainGame() {
     // 2. Handle advancing to the next game/round
     const handleNextGame = () => {
         console.log(round);
-        if (round >= numRounds-1) { //Check for +1 since it starts at 0
+        if (round >= numRounds) { //Check for +1 since it starts at 0
             // If this was the last round, end the game
             sessionStorage.removeItem('gameState-'+token);
             endGame();
