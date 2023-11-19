@@ -4,14 +4,23 @@ public class ProfileDTO {
     private String username;
     private String description;
     private String status;
-
+    private String avatarUrl;
     public ProfileDTO() {
     }
 
-    public ProfileDTO(String username, String description, String status, String img) {
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
+
+    public ProfileDTO(String username, String description, String status, String img, String avatarUrl) {
         this.username = username;
         this.description = description;
         this.status = status;
+        this.avatarUrl = avatarUrl;
     }
     public String getUsername() {
         return username;
