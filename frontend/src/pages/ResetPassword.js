@@ -51,7 +51,6 @@ export default function ResetPassword() {
             setErrors({ confirmPassword: "Passwords do not match" });
             return;
         }
-
         try {
             const params = new URLSearchParams();
             params.append('token', token);
@@ -60,6 +59,7 @@ export default function ResetPassword() {
             await axios.post("http://localhost:8085/api/v1/user/reset-password", params);
             navigate('/login');
         } catch (err) {
+
         }
     };
 

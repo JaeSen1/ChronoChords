@@ -110,6 +110,7 @@ export default function MainGame() {
         validateToken();
     }, [token, navigate]);
     
+    //END GAME FUNCTION NULLIFES USERS GAME TOKEN to make user unable to load back into same game.
     const endGame = () => {
         try {
             // Construct the params to be sent with the POST request
@@ -120,7 +121,6 @@ export default function MainGame() {
             axios.post("http://localhost:8085/api/game/end", params);
 
             // Here you can navigate to a different route or display a game over message
-            navigate('/'); // Redirect to the game selection page
         } catch (error) {
             console.error('Error ending the game:', error);
         }
@@ -131,8 +131,6 @@ export default function MainGame() {
     useEffect(() => {
         if (gamemode === 'Classic') {
             setNumRounds(songs.length);
-        } else {
-            
         }
     }, [gamemode, token, songs.length]); 
     
@@ -146,15 +144,14 @@ export default function MainGame() {
 
     // 2. Handle advancing to the next game/round
     const handleNextGame = () => {
-        console.log(round + 1);
-        // Not the last round yet, advance to the next one
-        setRound(round + 1);
-        setSongIndex((songIndex + 1) % songs.length); // go to the next song, loop back to the first song if needed
-        setScore(null); // reset the score
-        setReveal(false); // hide details for the new round
-        setSliderLocked(false);
-        setActualYear(null); // Reset for the next round
-        setUserGuess(1960);
+            // Not the last round yet, advance to the next one
+            setRound(round + 1);
+            setSongIndex((songIndex + 1) % songs.length); // go to the next song, loop back to the first song if needed
+            setScore(null); // reset the score
+            setReveal(false); // hide details for the new round
+            setSliderLocked(false);
+            setActualYear(null); // Reset for the next round
+            setUserGuess(1960);
     };
 
     const handleSliderChange = (event, newValue) => {
@@ -218,11 +215,12 @@ export default function MainGame() {
           .catch(error => {
             // Handle error
           });
-        if (round >= numRounds) {
-        // If this was the last round, end the game
-        sessionStorage.removeItem('gameState-'+token);
-        endGame();
-        }
+          if (round >= numRounds) { 
+            // If this was the last round, end the game
+            console.log("Game finished");
+            sessionStorage.removeItem('gameState-'+token);
+            endGame();
+        } 
     };
     return (
         <div className="App">
