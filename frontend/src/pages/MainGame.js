@@ -146,22 +146,15 @@ export default function MainGame() {
 
     // 2. Handle advancing to the next game/round
     const handleNextGame = () => {
-        console.log(round);
-        if (round >= numRounds) { //Check for +1 since it starts at 0
-            // If this was the last round, end the game
-            sessionStorage.removeItem('gameState-'+token);
-            endGame();
-        } else {
-            // Not the last round yet, advance to the next one
-            setRound(round + 1);
-            setSongIndex((songIndex + 1) % songs.length); // go to the next song, loop back to the first song if needed
-            setScore(null); // reset the score
-            setReveal(false); // hide details for the new round
-            setSliderLocked(false);
-            setActualYear(null); // Reset for the next round
-            setUserGuess(1960);
-            
-        }
+        console.log(round + 1);
+        // Not the last round yet, advance to the next one
+        setRound(round + 1);
+        setSongIndex((songIndex + 1) % songs.length); // go to the next song, loop back to the first song if needed
+        setScore(null); // reset the score
+        setReveal(false); // hide details for the new round
+        setSliderLocked(false);
+        setActualYear(null); // Reset for the next round
+        setUserGuess(1960);
     };
 
     const handleSliderChange = (event, newValue) => {
@@ -225,7 +218,11 @@ export default function MainGame() {
           .catch(error => {
             // Handle error
           });
-          
+        if (round >= numRounds) {
+        // If this was the last round, end the game
+        sessionStorage.removeItem('gameState-'+token);
+        endGame();
+        }
     };
     return (
         <div className="App">
