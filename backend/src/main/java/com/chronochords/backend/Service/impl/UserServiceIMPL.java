@@ -108,6 +108,7 @@ public class UserServiceIMPL implements UserService {
         profileDTO.setUsername(user.getUsername());
         profileDTO.setDescription(user.getDescription());
         profileDTO.setStatus(user.getStatus());
+        profileDTO.setAvatarUrl(user.getAvatarUrl());
 
         return profileDTO;
     }
@@ -121,6 +122,7 @@ public class UserServiceIMPL implements UserService {
         // Convert the User entity into a ProfileDTO and return
         user.setDescription(profileDTO.getDescription());
         user.setStatus(profileDTO.getStatus());
+        user.setAvatarUrl(profileDTO.getAvatarUrl());
 
         userRepo.save(user);
     }

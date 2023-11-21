@@ -30,6 +30,8 @@ public class User {
     private String description;
     @Column(name = "status", length = 30)
     private String status;
+    @Column(name = "avatar_url")
+    private String avatarUrl;
 
     public User() {
     }
@@ -103,5 +105,13 @@ public class User {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../AuthContext';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
@@ -31,7 +31,7 @@ function ProfilePage() {
     const [profile, setProfile] = useState(initialState);
     const userId = authUser.userId;
 
-    // Array of avatar URLs (replace these with actual URLs)
+    // Array of avatar URLs
     const avatarUrls = [
       '/avatars/avatar4.png',
       '/avatars/avatar5.png',
@@ -45,20 +45,28 @@ function ProfilePage() {
 
     // Function to go to the next avatar
     const nextAvatar = () => {
-      setAvatarIndex((prevIndex) => (prevIndex + 1) % avatarUrls.length);
+      const newIndex = (avatarIndex + 1) % avatarUrls.length;
+      setAvatarIndex(newIndex);
+      setProfile(prevState => ({ ...prevState, avatarUrl: avatarUrls[newIndex] }));
     };
 
-    // Function to go to the previous avatar
-      const previousAvatar = () => {
-      setAvatarIndex((prevIndex) => (prevIndex - 1 + avatarUrls.length) % avatarUrls.length);
+    const previousAvatar = () => {
+      const newIndex = (avatarIndex - 1 + avatarUrls.length) % avatarUrls.length;
+      setAvatarIndex(newIndex);
+      setProfile(prevState => ({ ...prevState, avatarUrl: avatarUrls[newIndex] }));
     };
+
     useEffect(() => {
       fetch(`http://localhost:8085/api/v1/user/profile/${userId}`)
         .then(response => response.json())
         .then(data => {
           setProfile({
-            ...data
+            ...data,
+            avatarUrl: data.avatarUrl || avatarUrls[0] // Use existing avatar URL or default to the first one
           });
+          // Set the avatarIndex based on the fetched avatarUrl
+          const avatarIndex = avatarUrls.findIndex(url => url === data.avatarUrl);
+          setAvatarIndex(avatarIndex !== -1 ? avatarIndex : 0);
         })
         .catch(error => console.error('Error:', error));
     }, [userId]);
@@ -67,20 +75,6 @@ function ProfilePage() {
       const { name, value } = e.target;
       setProfile(prevState => ({ ...prevState, [name]: value }));
     };
-  
-    const handleImageChange = (e) => {
-      if (e.target.files && e.target.files[0]) {
-        // Store the file object in the state
-        setProfile(prevState => ({ ...prevState, img: e.target.files[0] }));
-    
-        // You can still use FileReader to display the image preview
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          setProfile(prevState => ({ ...prevState, profilePic: event.target.result }));
-        };
-        reader.readAsDataURL(e.target.files[0]);
-      }
-    };
     
     const toggleEditMode = () => {
       setEditMode(!editMode);
@@ -88,15 +82,13 @@ function ProfilePage() {
   
     const handleSaveChanges = () => {
       console.log('Profile data to save:', profile);
-  
-      // Construct the request options for PUT request
+    
       const requestOptions = {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(profile)
+          body: JSON.stringify(profile) // This includes the avatar URL
       };
-  
-      // Send a PUT request to your server endpoint
+    
       fetch(`http://localhost:8085/api/v1/user/profile/${userId}`, requestOptions)
           .then(response => {
               if (!response.ok) {
