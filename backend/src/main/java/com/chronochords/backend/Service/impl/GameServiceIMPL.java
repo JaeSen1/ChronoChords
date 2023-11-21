@@ -25,7 +25,21 @@ public class GameServiceIMPL implements GameService {
         gameSessionRepository.save(session);
         return gameToken;
     }
+    // In GameServiceIMPL.java
+    public Game findGameByUserId(Integer userId) {
+        return gameSessionRepository.findByUser_UseridAndTokenIsNotNull(userId);
+    }
+    public String startNewGame(User user, String gameMode) {
+        String gameToken = UUID.randomUUID().toString();
+        Game session = new Game(user, gameToken);
+        session.setGameMode(gameMode);
+        gameSessionRepository.save(session);
+        return gameToken;
+    }
 
+    public Game findGameByUserIdAndGameMode(Integer userId, String gameMode) {
+        return gameSessionRepository.findByUser_UseridAndGameModeAndTokenIsNotNull(userId, gameMode);
+    }
     @Override
     public boolean validateToken(String token) {
         if (token == null || token.isEmpty()) {
@@ -45,17 +59,6 @@ public class GameServiceIMPL implements GameService {
             gameSessionRepository.save(game);
         }
     }
-
-    public void updateGameState(String token, int userGuess) {
-        Game game = gameSessionRepository.findByToken(token);
-        if (game != null) {
-            // Logic to update the round, calculate score based on userGuess
-            // and actual data, and update the game state
-
-            gameSessionRepository.save(game); // Save the updated state
-        }
-    }
-
 
     public GameRepo getGameSessionRepository() {
         return gameSessionRepository;

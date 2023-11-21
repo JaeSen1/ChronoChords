@@ -7,7 +7,7 @@ import Popup from '../components/Popup';
 import ScoreDisplay from '../components/ScoreDisplay';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate , useLocation} from 'react-router-dom';
 import Alert from '@mui/material/Alert';
 
 const getInitialState = (token) => {
@@ -29,20 +29,26 @@ const getInitialState = (token) => {
 };
 
 export default function MainGame() {
-    let { token } = useParams(); // token parameter passed from url.
-    let {gamemode} = useParams();
-    const [numRounds, setNumRounds] = useState(10);
-    const initialState = getInitialState(token);
-    const [notification, setNotification] = useState('');
+    const location = useLocation();
+    const gameData = location.state?.gameData;
+    let { token, gamemode } = useParams();
+    const navigate = useNavigate();
+
+    // Updated initial state setup using gameData
+    const initialState = gameData || getInitialState(token);
+    const localInitialState = getInitialState(token);
+
+    const [numRounds, setNumRounds] = useState(10); // You might want to update this based on the game mode
     const [round, setRound] = useState(initialState.round);
-    const [score, setScore] = useState(initialState.score);
-    const [songs, setSongs] = useState(initialState.songs);
-    const [songIndex, setSongIndex] = useState(initialState.songIndex); // to keep track of the current song
-    const [reveal, setReveal] = useState(initialState.reveal); // to control revealing song details
-    const [userGuess, setUserGuess] = useState(1960); // initial value
+    const [score, setScore] = useState(localInitialState.score);
+    const [songs, setSongs] = useState(localInitialState.songs);
+    const [songIndex, setSongIndex] = useState(localInitialState.songIndex);
+    const [reveal, setReveal] = useState(initialState.reveal);
+    const [userGuess, setUserGuess] = useState(1960); // Initial guess value
     const [sliderLocked, setSliderLocked] = useState(initialState.sliderLocked);
     const [actualYear, setActualYear] = useState(initialState.actualYear);
-    const navigate = useNavigate();
+    const [notification, setNotification] = useState('');
+
     //url: data.previewUrl
     //cover: data.images[0]
     //year: data.album.releaseDate (set to year only)
@@ -195,7 +201,7 @@ export default function MainGame() {
             newScore = Math.max(newScore, 0);
         }
     
-        // Update the score state.
+        // Update the score state. 
         setScore(newScore);
     
         // Reveal song details after guessing

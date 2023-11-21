@@ -53,50 +53,60 @@ const StartGame = () => {
         };
 
         const startGame = async (gameModeKey) => {
-            switch(gameModeKey){
-                case 'Classic':
+            switch (gameModeKey) {
+                case 'Classic':    
                     if (!authUser || !authUser.userId) {
-                        navigate('/login', { state: { from: 'StartGame', message: 'You must be logged in to start a Classic Unlimited game.'} });
+                        navigate('/login', { state: { from: 'StartGame', message: 'You must be logged in to start a Classic Unlimited game.' } });
                     } else {
-                        const userId = authUser.userId;
-                        const url = `http://localhost:8085/api/game/start/${userId}`;
-                    try {
-                        const response = await axios.post(url);
-                        const token = response.data; // The token received from the backend
-                        if (token) {
-                            // Navigate to the MainGame component with the token
-                            navigate(`/${gameModeKey}/${token}`);
-                        } else {
-                            // Handle the case where no token is received
-                            console.error('No token received');
+                        try {
+                            const userId = authUser.userId;
+                            let response = await axios.get(`http://localhost:8085/api/game/check-game/${userId}/${gameModeKey}`);
+                            let gameData = response.data;
+                    
+                            if (gameData && gameData.token) {
+                                // Pass the entire game data to the game page
+                                navigate(`/${gameModeKey}/${gameData.token}`, { state: { gameData } });
+                            } else {
+                                response = await axios.post(`http://localhost:8085/api/game/start/${userId}/${gameModeKey}`);
+                                let token = response.data;
+                    
+                                if (token) {
+                                    navigate(`/${gameModeKey}/${token}`);
+                                } else {
+                                    console.error('No token received');
+                                }
+                            }
+                        } catch (error) {
+                            console.error('Error in game initiation:', error);
                         }
-                    } catch (error) {
-                        // Handle errors: user not found, server error, etc.
-                        console.error('Error starting game:', error);
-                    }
-                }
+                    };
                     break;
                 case 'Daily':
                     if (!authUser || !authUser.userId) {
                         navigate(`${gameModeKey}/Guest`)
                     } else {
-                        const userId = authUser.userId;
-                        const url = `http://localhost:8085/api/game/start/${userId}`;
-                    try {
-                        const response = await axios.post(url);
-                        const token = response.data; // The token received from the backend
-                        if (token) {
-                            // Navigate to the MainGame component with the token
-                            navigate(`/${gameModeKey}/${token}`);
-                        } else {
-                            // Handle the case where no token is received
-                            console.error('No token received');
+                        try {
+                            const userId = authUser.userId;
+                            let response = await axios.get(`http://localhost:8085/api/game/check-game/${userId}/${gameModeKey}`);
+                            let gameData = response.data;
+                    
+                            if (gameData && gameData.token) {
+                                // Pass the entire game data to the game page
+                                navigate(`/${gameModeKey}/${gameData.token}`, { state: { gameData } });
+                            } else {
+                                response = await axios.post(`http://localhost:8085/api/game/start/${userId}/${gameModeKey}`);
+                                let token = response.data;
+                    
+                                if (token) {
+                                    navigate(`/${gameModeKey}/${token}`);
+                                } else {
+                                    console.error('No token received');
+                                }
+                            }
+                        } catch (error) {
+                            console.error('Error in game initiation:', error);
                         }
-                    } catch (error) {
-                        // Handle errors: user not found, server error, etc.
-                        console.error('Error starting game:', error);
-                    }
-                }
+                    };
                     break;
                 default:
                     break;

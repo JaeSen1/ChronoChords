@@ -5,12 +5,25 @@ import jakarta.persistence.*;
 @Entity
 @Table(name="game")
 public class Game {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    private int[] guessScores = new int[20]; // to store scores for each guess
+    private int[] guessScores = new int[50]; // to store scores for each guess
     private int totalScore;
-    private int guessesCount;
+    private String gameMode;
+
+    public String getGameMode() {
+        return gameMode;
+    }
+    public int getGuessesCount() {
+        return guessesCount;
+    }
+    public void setGameMode(String gameMode) {
+        this.gameMode = gameMode;
+    }
+
+    private int guessesCount = 1;
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
