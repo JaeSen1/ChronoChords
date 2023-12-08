@@ -12,6 +12,10 @@ public class Game {
     private int[] guessScores = new int[50]; // to store scores for each guess
     private int totalScore;
     private String gameMode;
+    private int guessesCount = 1;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     public String getGameMode() {
         return gameMode;
@@ -22,11 +26,6 @@ public class Game {
     public void setGameMode(String gameMode) {
         this.gameMode = gameMode;
     }
-
-    private int guessesCount = 1;
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
 
     public int getId() {
         return id;
@@ -50,6 +49,22 @@ public class Game {
             guessScores[guessesCount++] = score;
             totalScore += score;
         }
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setGuessesCount(int guessesCount) {
+        this.guessesCount = guessesCount;
+    }
+
+    public void setTotalScore(int totalScore) {
+        this.totalScore = totalScore;
     }
 
     public int getTotalScore() {

@@ -21,14 +21,14 @@ export default function RoundCount({ round, numRounds }) {
               }}
             >
               <Typography
-                variant="subtitle1" // smaller text size compared to "h6"
+                variant="h6" 
                 component="div"
                 sx={{
                   textAlign: 'center', // Center the text horizontally
                   color: '#fff', // Text color, adjust as needed
                 }}
               >
-                Round {round} of {numRounds}
+                Round {round}
               </Typography>
             </Box>
         </>

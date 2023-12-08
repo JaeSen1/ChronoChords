@@ -45,7 +45,6 @@ public class GameController {
             gameInfo.put("totalScore", existingGame.getTotalScore());
             gameInfo.put("round", existingGame.getGuessesCount());
             gameInfo.put("guessScores", existingGame.getGuessScores());
-
             return ResponseEntity.ok(gameInfo);
         } else {
             return ResponseEntity.ok().body("No active game found for user in this mode");
